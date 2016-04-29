@@ -1,4 +1,5 @@
 <textarea id="codereader" cols="100" rows="10" onKeyPress="enterpressalert(event, this)"></textarea>
+<textarea id="codereaderDelete" cols="20" rows="2" onKeyPress="enterpressalert(event, this)"></textarea>
 <script type="text/javascript">
 $(document).ready(function() {
 	$('#codereader').focus(function(){

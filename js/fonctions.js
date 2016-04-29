@@ -14,7 +14,7 @@ function setShipping(id) {
 	$("#search_shipping").val(id);
 	$('ul#list-shipping li').removeClass('active');
 	$('ul#list-shipping li[exp-id='+id+']').addClass('active');
-	
+	$('#codereader').val('');
 	reload_list_shipping_details(id);
 	
 }
@@ -126,8 +126,29 @@ function refreshListStatus() {
 	
 	var TCode = $('#codereader').val().split("\n");
 	
+	var TDelete = $('#codereaderDelete').val().split("\n");
+	
+	for(d in TDelete) {
+		for(x in TCode) {
+			
+			if(TDelete[d] == TCode[x]) {
+				delete TCode[x];
+				break;
+			}
+						
+		}
+	}
+	
+	$('#codereaderDelete').val('');
+	
+	var codes = "";
+	
 	for(x in TCode) {
 		ref = TCode[x];
+		
+		if(!ref) continue;
+
+		codes+=ref+"\n";
 	
 		$tr = $t.find('tr[ref='+ref+']');
 		
@@ -142,6 +163,9 @@ function refreshListStatus() {
 		}
 		
 	}
+	
+	$('#codereader').val(codes);
+	
 	
 }
 
