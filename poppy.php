@@ -30,28 +30,31 @@
 	</head>
 	<body>		
 	    <div class="container-fluid">
-			<?php require('./tpl/tasklist.onglet.php'); ?>
+			<?php require('./tpl/onglet.php'); ?>
 			<!-- Tab panes -->
 			<div class="tab-content">
-			  <div class="tab-pane active" id="list-task-user">
-			  		<div class="row">
-			  				<div id="liste_tache_user" class="list-group">
-								
-							</div>
-					</div>
-			  	
-			  </div>
-			  <div class="tab-pane" id="list-task-workstation">
+			  <div class="tab-pane active" id="list-expedition">
 			  		<div class="row">
 			  		<?php 
-	                    if($conf->workstation->enabled && $user->rights->workstation->all->read){
+	                    if($conf->expedition->enabled && $user->rights->expedition->lire){
 	                        ?>
 	                            <!-- Affichage de l'onglet "Postes de travail" -->
 	                            <div class="col-md-4">
-	                            	<?php require('./tpl/tasklist.onglet.workstations.php'); ?>
+	                            	<?php require('./tpl/expedition.php'); ?>
 	                            </div>
 	                            <div class="col-md-8">
-	                            	<div id="liste_tache_workstation" class="list-group"></div>
+	                            	<table  id="list-expedition-details" class="table table-striped">
+								    <thead>
+								      <tr>
+								        <th>Product</th>
+								        <th>QtyToShiping</th>
+								        <th>QtyScanned</th>
+								      </tr>
+								    </thead>
+								    <tbody>
+								    </tbody>
+								    </table>
+	                            	
 	                            </div>
 	                        <?php
 	                    }
@@ -59,31 +62,10 @@
 	                ?>
 	               </div>
 			  </div>
-			  <div class="tab-pane" id="list-of">
-			  		<?php 
-	                   if($accessOF){
-	                   	
-						  ?> <div class="col-md-4">
-                            	<?php require('./tpl/tasklist.onglet.of.php'); ?>
-                            </div>
-                            <div class="col-md-8">
-                            	<div id="list-task-of" class="">
-                            		<div id="liste_tache_of" class="list-group table-responsive"></div>
-                            	</div>
-                            </div>
-	                      <?php
-	                         
-	                    }
-	
-	                ?>
-	           </div>
-			 
+			  
 			</div>
 		    
-	        
-	        <?php require('./tpl/tasklist.listeTache.php'); ?>
-	        
-			<?php require('./tpl/tasklist.popup.php'); ?>
+			<?php require('./tpl/popup.php'); ?>
 		</div>
 		<script src="js/fonctions.js" type="text/javascript"></script>
 	</body>
