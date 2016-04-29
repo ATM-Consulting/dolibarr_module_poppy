@@ -16,4 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+- Chaque ligne de produit présente dans la commande (sauf frais de port) avec 2 colonnes : qté commandée,  qté scannée
+- Si  qté scannée < qté commandée => orange
+- Si qté scannée = qté commandée => vert
+- Si qté scannée > qté commandée => orange
+- Si produit hors commande => rouge avec bouton permettant la suppression de la ligne.
+- ATTENTION : Si l’agent scanne un EAN Colis, la quantité doit être augmentée du nombre de Produits présents dans le package.
+
+
 
