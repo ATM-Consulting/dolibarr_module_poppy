@@ -52,6 +52,9 @@ body {
 	display:inline;
 	color:black;
 }
+#list-expedition-details tr.mistake {
+	background-color : red;
+}
 #list-expedition-details tr.needMore {
 	background-color : #FF6633;
 		

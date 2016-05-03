@@ -104,5 +104,8 @@
 		
 		
 		<script src="js/fonctions.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			_focus_barcode();
+		</script>
 	</body>
 </html>

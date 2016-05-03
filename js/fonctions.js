@@ -137,7 +137,6 @@ function enterpressalert(e, textarea){
 function refreshListStatus() {
 	$t = $('#list-expedition-details>tbody');
 	$t.find('[rel=scanned]').html(0);
-	$t.find('tr.mistake').remove();
 	
 	var TCode = $('#codereader').val().split("\n");
 	
@@ -173,24 +172,35 @@ function refreshListStatus() {
 			qty = parseInt( $tr.find('td[rel="scanned"]').text() ) +1;
 			$tr.find('td[rel="scanned"]').text(qty);
 			
-			$tr.removeClass();
-			if(qty<qtyToShip) {
-				$tr.addClass('needMore');
+			if(!$tr.hasClass('mistake')) {
+				$tr.removeClass();
+				if(qty<qtyToShip) {
+					$tr.addClass('needMore');
+				}
+				else if(qty>qtyToShip) {
+					$tr.addClass('tooMuch');
+				}
+				console.log(qty,qtyToShip);
+				
 			}
-			else if(qty>qtyToShip) {
-				$tr.addClass('tooMuch');
-			}
-			console.log(qty,qtyToShip);
+			
 		}
 		else{
 			console.log('mistake',ref);
-			$t.append('<tr style="background-color:red;" ref="'+ref+'" class="mistake"><td>'+ref+'</td><td>0</td><td rel="scanned">1</td><td><span class="glyphicon glyphicon-question-sign"></td></tr>');
+			$t.append('<tr class="mistake" ref="'+ref+'" class="mistake"><td>'+ref+'</td><td>0</td><td rel="scanned">1</td><td><span class="glyphicon glyphicon-question-sign"></td></tr>');
 		}
 		
 	}
 	
 	$('#codereader').val(codes);
-	
+	$t.find('tr.mistake').each(function(i,item) {
+		if(parseInt($(item).find('tr[rel=scanned]').text()) == 0) {
+			$(item).remove();	
+		}
+		
+		
+	});
+		
 	
 }
 
