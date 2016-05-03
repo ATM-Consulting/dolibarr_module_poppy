@@ -184,7 +184,7 @@ function refreshListStatus() {
 		}
 		else{
 			console.log('mistake',ref);
-			$t.append('<tr style="background-color:red;" ref="'+ref+'" class="mistake"><td>'+ref+'</td><td>0</td><td rel="scanned">1</td></tr>');
+			$t.append('<tr style="background-color:red;" ref="'+ref+'" class="mistake"><td>'+ref+'</td><td>0</td><td rel="scanned">1</td><td><span class="glyphicon glyphicon-question-sign"></td></tr>');
 		}
 		
 	}
