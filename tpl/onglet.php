@@ -14,8 +14,6 @@
 		    <ul class="nav navbar-nav" role="tablist">
 		    	
 			  <?php  if($conf->expedition->enabled && $user->rights->expedition->lire){ ?><li><a href="#list-expedition" id="onglet2"  role="tab" data-toggle="tab"><?php echo $langs->trans('Shipping'); ?></a></li><?php } ?>
-				<li><a href="javascript:_focus_barcode()" id="codeflag" role="tab" ><?php echo img_picto('','barcode32.png@poppy') ?></a></li>			  
-			 
 			</ul>
 			
 			<ul class="nav navbar-nav navbar-right">	

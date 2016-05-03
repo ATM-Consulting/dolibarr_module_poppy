@@ -9,8 +9,9 @@
 	}
 	*/
 	
+	$langs->load('poppy@poppy');
 
-		$PDOdb = new TPDOdb;
+	$PDOdb = new TPDOdb;
 	
 ?><!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> -->
 <!DOCTYPE html>
@@ -43,12 +44,13 @@
 	                            	<?php require('./tpl/expedition.php'); ?>
 	                            </div>
 	                            <div class="col-md-8">
-	                            	<table  id="list-expedition-details" class="table table-striped">
+	                            	<table  id="list-expedition-details" class="table table-striped" style="font-size:18px;">
 								    <thead>
 								      <tr>
-								        <th>Product</th>
-								        <th>QtyToShiping</th>
-								        <th>QtyScanned</th>
+								        <th><?php echo $langs->trans('Product'); ?></th>
+								        <th><?php echo $langs->trans('QtyToShip'); ?></th>
+								        <th><?php echo $langs->trans('QtyScanned'); ?></th>
+								        <th>&nbsp;</th>
 								      </tr>
 								    </thead>
 								    <tbody>
@@ -66,7 +68,41 @@
 			</div>
 		    
 			<?php require('./tpl/popup.php'); ?>
+		<div class="floating-buttons">	
+			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-barcode" onclick="_focus_barcode();" id="codeflag"></button>
+			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-trash" onclick="_focus_barcode_delete();" id="codeflagdelete"></button>
+			<div style="position:absolute; top:-500px; left: -500px; overflow:hidden;width:1px;height:1px; ">
+				<textarea id="codereader" cols="100" rows="10" onKeyPress="enterpressalert(event, this)"></textarea>
+				<textarea id="codereaderDelete" cols="20" rows="2" onKeyPress="enterpressalert(event, this)"></textarea>
+			</div>
+			<script type="text/javascript">
+			$(document).ready(function() {
+				$('#codereader').focus(function(){
+					$('#codeflag').addClass('activate');
+				});
+				
+				$('#codereader').blur(function(){
+					$('#codeflag').removeClass('activate');
+				});
+				
+				$('#codereaderDelete').focus(function(){
+					$('#codeflagdelete').addClass('activate');
+				});
+				
+				$('#codereaderDelete').blur(function(){
+					$('#codeflagdelete').removeClass('activate');
+				});
+				
+				
+				_focus_barcode();	
+			});
+			
+			
+			</script>
 		</div>
+		</div>
+		
+		
 		<script src="js/fonctions.js" type="text/javascript"></script>
 	</body>
 </html>

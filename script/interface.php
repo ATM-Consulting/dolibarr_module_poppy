@@ -52,6 +52,14 @@ function _getShippingDetails(&$PDOdb, $id) {
 	
 	foreach($expedition->lines as &$line) {
 		
+		if($line->fk_product>0) {
+			
+			$line->product = new Product($db);
+			$line->product->fetch($line->fk_product);
+			
+			$line->barcode = $line->product->barcode;
+		}
+		
 		$Tab[] = $line;
 		
 	}

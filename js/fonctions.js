@@ -110,7 +110,7 @@ function reload_list_shipping_details(id) {
 	
 		for(x in data) {
 			obj = data[x];
-			$t.append('<tr ref="'+obj.ref+'"><td>'+obj.product_label+'</td><td>'+obj.qty_shipped+'</td><td rel="scanned">0</td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td>'+obj.product_label+'</td><td rel="toShip">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
 		}
 
 	});
@@ -118,6 +118,21 @@ function reload_list_shipping_details(id) {
 }
 
 
+function _focus_barcode_delete() {
+	
+	$('#codereaderDelete').focus();
+}
+
+function _focus_barcode() {
+	console.log('_focus_barcode');
+	$('#codereader').focus();
+}
+function enterpressalert(e, textarea){
+	var code = (e.keyCode ? e.keyCode : e.which);
+	if(code == 13) { //Enter keycode
+		refreshListStatus();
+	}
+}
 
 function refreshListStatus() {
 	$t = $('#list-expedition-details>tbody');
@@ -150,12 +165,22 @@ function refreshListStatus() {
 
 		codes+=ref+"\n";
 	
-		$tr = $t.find('tr[ref='+ref+']');
+		$tr = $t.find('tr[barcode='+ref+'],tr[ref='+ref+']').first(); // récupère le 1er avec code barre ou ref
 		
 		if($tr.length>0) {
 			console.log(ref);	
-			qty = parseInt( $tr.find('td[rel="scanned"]').text() ) + 1 ;
-			$tr.find('td[rel="scanned"]').html(qty);
+			qtyToShip = parseInt( $tr.find('td[rel="toShip"]').text() ) ;
+			qty = parseInt( $tr.find('td[rel="scanned"]').text() ) +1;
+			$tr.find('td[rel="scanned"]').text(qty);
+			
+			$tr.removeClass();
+			if(qty<qtyToShip) {
+				$tr.addClass('needMore');
+			}
+			else if(qty>qtyToShip) {
+				$tr.addClass('tooMuch');
+			}
+			console.log(qty,qtyToShip);
 		}
 		else{
 			console.log('mistake',ref);

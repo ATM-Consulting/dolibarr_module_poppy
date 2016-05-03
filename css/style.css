@@ -21,3 +21,68 @@ body {
 #select-user-list {
 	border:1px solid #fff;
 }
+
+.floating-buttons {
+	position:absolute;
+	bottom:50px;
+	right:50px;
+	
+}
+.floating-buttons button  {
+	margin-left:50px;
+}
+#codeflagdelete {
+	color:red;
+}
+#codeflagdelete.activate {
+	background-color:red;
+	color:#fff;
+}
+#codeflag {
+	background-color:orange;
+}
+	
+#codeflag.activate {
+	background-color:#33ff33;
+}
+#list-expedition-details tr td.state span {
+	display:none;
+}
+#list-expedition-details tr.tooMuch td.state span {
+	display:inline;
+	color:black;
+}
+#list-expedition-details tr.needMore {
+	background-color : #FF6633;
+		
+}
+#list-expedition-details tr.tooMuch {
+	background-color : #FF6600;
+	
+}
+
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.428571429;
+  border-radius: 15px;
+}
+.btn-circle.btn-lg {
+  width: 50px;
+  height: 50px;
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.33;
+  border-radius: 25px;
+}
+.btn-circle.btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  font-size: 24px;
+  line-height: 1.33;
+  border-radius: 35px;
+}

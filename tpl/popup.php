@@ -1,32 +1,4 @@
-<textarea id="codereader" cols="100" rows="10" onKeyPress="enterpressalert(event, this)"></textarea>
-<textarea id="codereaderDelete" cols="20" rows="2" onKeyPress="enterpressalert(event, this)"></textarea>
-<script type="text/javascript">
-$(document).ready(function() {
-	$('#codereader').focus(function(){
-		$('#codeflag').css({
-			'background-color':'#33ff33'
-		});
-	});
-	
-	$('#codereader').blur(function(){
-		$('#codeflag').css({
-			'background-color':'orange'
-		});
-	});
-	
-	_focus_barcode();	
-});
-function _focus_barcode() {
-	console.log('_focus_barcode');
-	$('#codereader').focus();
-}
-function enterpressalert(e, textarea){
-	var code = (e.keyCode ? e.keyCode : e.which);
-	if(code == 13) { //Enter keycode
-		refreshListStatus();
-	}
-}
-</script>
+
 <div id="confirm-add-time"  class="modal" role="dialog">
     <div class="modal-dialog">
 	    <div class="modal-content">

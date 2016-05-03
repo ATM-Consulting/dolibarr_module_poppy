@@ -5,3 +5,7 @@ ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.
 
 PoppySetup = Configuration du module Poppy
 PoppyAbout = A propos du module Poppy
+
+PreparePackage=Préparer le colis
+QtyToShip=Qté à expédier
+QtyScanned=Qté scannée

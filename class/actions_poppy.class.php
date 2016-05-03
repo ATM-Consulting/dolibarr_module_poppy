@@ -59,24 +59,29 @@ class ActionsPoppy
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
 	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
 	 */
-	function doActions($parameters, &$object, &$action, $hookmanager)
+	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		$error = 0; // Error counter
-		$myvalue = 'test'; // A result value
+		
 
-		print_r($parameters);
-		echo "action: " . $action;
-		print_r($object);
-
-		if (in_array('somecontext', explode(':', $parameters['context'])))
+		if (in_array('expeditioncard', explode(':', $parameters['context'])))
 		{
-		  // do something only for the context 'somecontext'
+			global $langs;
+			
+			$langs->load('poppy@poppy');
+			
+		  	?>
+		  	<script type="text/javascript">
+		  	$(document).ready(function() {
+			  	$a = $('<a href="<?php echo dol_buildpath('/poppy/poppy.php?fk_shipping='.$object->id,1) ?>" class="butAction" target="_blank"><?php echo $langs->trans('PreparePackage') ?></a>');
+			  	$('div.fiche div.tabsAction').first().append($a);
+		  	});
+		  	</script>
+		  	<?php
 		}
 
 		if (! $error)
 		{
-			$this->results = array('myreturn' => $myvalue);
-			$this->resprints = 'A text to show';
 			return 0; // or return 1 to replace standard code
 		}
 		else
