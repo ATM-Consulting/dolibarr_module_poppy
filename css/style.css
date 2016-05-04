@@ -59,6 +59,12 @@ body {
 	background-color : #FF6633;
 		
 }
+#list-expedition-details tr.goodQty {
+	background-color : green;
+		
+}
+
+
 #list-expedition-details tr.tooMuch {
 	background-color : #FF6600;
 	

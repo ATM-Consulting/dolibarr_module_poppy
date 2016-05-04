@@ -180,6 +180,9 @@ function refreshListStatus() {
 				else if(qty>qtyToShip) {
 					$tr.addClass('tooMuch');
 				}
+				else if(qty == qtyToShip) {
+					$tr.addClass('goodQty');
+				}
 				console.log(qty,qtyToShip);
 				
 			}
