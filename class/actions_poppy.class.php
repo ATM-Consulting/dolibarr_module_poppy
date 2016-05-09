@@ -68,16 +68,20 @@ class ActionsPoppy
 		{
 			global $langs;
 			
-			$langs->load('poppy@poppy');
 			
-		  	?>
-		  	<script type="text/javascript">
-		  	$(document).ready(function() {
-			  	$a = $('<a href="<?php echo dol_buildpath('/poppy/poppy.php?fk_shipping='.$object->id,1) ?>" class="butAction" target="_blank"><?php echo $langs->trans('PreparePackage') ?></a>');
-			  	$('div.fiche div.tabsAction').first().append($a);
-		  	});
-		  	</script>
-		  	<?php
+			if ($object->statut==1) {
+			
+				$langs->load('poppy@poppy');
+				
+			  	?>
+			  	<script type="text/javascript">
+			  	$(document).ready(function() {
+				  	$a = $('<a href="<?php echo dol_buildpath('/poppy/poppy.php?fk_shipping='.$object->id,1) ?>" class="butAction" target="_blank"><?php echo $langs->trans('PreparePackage') ?></a>');
+				  	$('div.fiche div.tabsAction').first().append($a);
+			  	});
+			  	</script>
+			  	<?php
+			}
 		}
 
 		if (! $error)
