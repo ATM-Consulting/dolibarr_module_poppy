@@ -23,6 +23,8 @@
  * 				Put some comments here
  */
 // Dolibarr environment
+
+
 $res = @include("../../main.inc.php"); // From htdocs directory
 if (! $res) {
     $res = @include("../../../main.inc.php"); // From "custom" directory
@@ -49,7 +51,10 @@ $action = GETPOST('action', 'alpha');
 if (preg_match('/set_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
-	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0)
+	$value = GETPOST($code);
+	if(is_array($value))$value = implode(',',$value);
+	
+	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -115,9 +120,32 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_POPPY_RETRICT_TO_ONE">';
 echo ajax_constantonoff('POPPY_RETRICT_TO_ONE');
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
+
+if($conf->categorie->enabled) {
+	
+	dol_include_once('/categories/class/categorie.class.php');
+	$TCat = array();
+	if(!empty($conf->global->POPPY_EXCLUDE_CATEGORY)) $TCat = explode(',',$conf->global->POPPY_EXCLUDE_CATEGORY); 
+	
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("POPPY_EXCLUDE_CATEGORY").'</td>';
+	print '<td align="center" width="20">&nbsp;</td>';
+	print '<td align="right" width="300">';
+	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="set_POPPY_EXCLUDE_CATEGORY">';
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+	
+	print $form->multiselectarray('POPPY_EXCLUDE_CATEGORY', $cate_arbo, $TCat);
+	
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</form>';
+	print '</td></tr>';
+	
+}
 
 print '</table>';
 

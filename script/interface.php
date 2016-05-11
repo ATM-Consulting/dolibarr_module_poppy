@@ -95,13 +95,31 @@ function _getShippingDetails(&$PDOdb, $id) {
 		
 		if($line->fk_product>0) {
 			
+			$addLine = true;
+			
 			$line->product = new Product($db);
 			$line->product->fetch($line->fk_product);
 			
 			$line->barcode = $line->product->barcode;
+			if($conf->categorie->enabled) {
+	
+				$TCatExclude = explode(',',$conf->global->POPPY_EXCLUDE_CATEGORY);
+	
+				dol_include_once('/categories/class/categorie.class.php');
+				$c = new Categorie($db);
+				$cats = $c->containing($line->fk_product,Categorie::TYPE_PRODUCT);
+				foreach($cats as $cat) {
+					if(in_array($cat->id, $TCatExclude)) {
+						$addLine= false;
+						break;
+					}
+				}
+			}
+			
+			if($addLine) $Tab[] = $line;
 		}
 		
-		$Tab[] = $line;
+		
 		
 	}
 	
