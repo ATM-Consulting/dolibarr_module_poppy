@@ -9,3 +9,7 @@ PoppyAbout = A propos du module Poppy
 PreparePackage=Préparer le colis
 QtyToShip=Qté à expédier
 QtyScanned=Qté scannée
+POPPY_RETRICT_TO_ONE=Restreindre le colissage à l'expédition sélectionnée via bouton
+
+addHelp=Si vert, alors la douchette ajoute des produits au colis. Si orange, cliquez pour ajouter
+removeHelp=Si fond rouge, alors la douchette enlève des produits du colis. Si fond bleu cliquez pour supprimer.

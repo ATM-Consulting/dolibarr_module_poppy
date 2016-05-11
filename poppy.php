@@ -3,6 +3,7 @@
 	require('config.php');
 	dol_include_once('/user/class/usergroup.class.php');
 	dol_include_once('/core/lib/date.lib.php');
+	dol_include_once('/expedition/class/expedition.class.php');
 	
 	/*if (!($user->admin || $user->rights->tasklist->all->read)) {
     	accessforbidden();
@@ -10,6 +11,8 @@
 	*/
 	
 	$langs->load('poppy@poppy');
+
+	$fk_shipping_selected = GETPOST('fk_shipping');
 
 	$PDOdb = new TPDOdb;
 	
@@ -31,18 +34,39 @@
 	</head>
 	<body>		
 	    <div class="container-fluid">
-			<?php require('./tpl/onglet.php'); ?>
+	    	
+			<?php 
+			if(!empty($conf->global->POPPY_RETRICT_TO_ONE) && $fk_shipping_selected>0) {
+				null;	
+			}
+			else{
+				require('./tpl/onglet.php');	
+			}
+			 
+			?>
 			<!-- Tab panes -->
 			<div class="tab-content">
 			  <div class="tab-pane active" id="list-expedition">
 			  		<div class="row">
 			  		<?php 
 	                    if($conf->expedition->enabled && $user->rights->expedition->lire){
-	                        ?>
+	                    	
+							if(!empty($conf->global->POPPY_RETRICT_TO_ONE) && $fk_shipping_selected>0) {
+								$expedition = new Expedition($db);
+								$expedition->fetch($fk_shipping_selected);
+								echo '<h1>'.$expedition->ref.'</h1>';
+							}
+							else {
+						    ?>
 	                            <!-- Affichage de l'onglet "Postes de travail" -->
+	                            
 	                            <div class="col-md-4">
 	                            	<?php require('./tpl/expedition.php'); ?>
 	                            </div>
+	                            
+	                       <?php
+	                       }
+	                       ?>
 	                            <div class="col-md-8">
 	                            	<table  id="list-expedition-details" class="table table-striped" style="font-size:18px;">
 								    <thead>
@@ -69,14 +93,16 @@
 		    
 			<?php require('./tpl/popup.php'); ?>
 		<div class="floating-buttons">	
-			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-barcode" onclick="_focus_barcode();" id="codeflag"></button>
-			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-trash" onclick="_focus_barcode_delete();" id="codeflagdelete"></button>
+			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-plus" onclick="_focus_barcode();" id="codeflag" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('addHelp'); ?>"></button>
+			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-trash" onclick="_focus_barcode_delete();" id="codeflagdelete" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('removeHelp'); ?>"></button>
 			<div style="position:absolute; top:-500px; left: -500px; overflow:hidden;width:1px;height:1px; ">
 				<textarea id="codereader" cols="100" rows="10" onKeyPress="enterpressalert(event, this)"></textarea>
 				<textarea id="codereaderDelete" cols="20" rows="2" onKeyPress="enterpressalert(event, this)"></textarea>
 			</div>
 			<script type="text/javascript">
 			$(document).ready(function() {
+				$('button[data-toggle="tooltip"]').tooltip();
+				
 				$('#codereader').focus(function(){
 					$('#codeflag').addClass('activate');
 				});

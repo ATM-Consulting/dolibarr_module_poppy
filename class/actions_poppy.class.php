@@ -73,9 +73,22 @@ class ActionsPoppy
 		  	?>
 		  	<script type="text/javascript">
 		  	$(document).ready(function() {
-			  	$a = $('<a href="<?php echo dol_buildpath('/poppy/poppy.php?fk_shipping='.$object->id,1) ?>" class="butAction" target="_blank"><?php echo $langs->trans('PreparePackage') ?></a>');
+			  	$a = $('<a href="javascript:popPoppy()" class="butAction"><?php echo $langs->trans('PreparePackage') ?></a>');
 			  	$('div.fiche div.tabsAction').first().append($a);
 		  	});
+		  	
+		  	function popPoppy() {
+		  		$div = $('<div id="popPoppy"><iframe width="100%" height="100%" frameborder="0" src="<?php echo dol_buildpath('/poppy/poppy.php?fk_shipping='.$object->id,1) ?>"></iframe></div>');
+
+				$div.dialog({
+					modal:true
+					,width:"90%"
+					,height:$(window).height() - 50
+					
+				});
+		  		
+		  	}
+		  	
 		  	</script>
 		  	<?php
 		}
