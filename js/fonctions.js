@@ -110,7 +110,7 @@ function reload_list_shipping_details(id) {
 	
 		for(x in data) {
 			obj = data[x];
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td>'+obj.product_label+'</td><td rel="toShip">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="label">'+obj.product_label+'</td><td rel="toShip">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
 		}
 
 	});
@@ -134,26 +134,137 @@ function enterpressalert(e, textarea){
 	}
 }
 
+function lessRefLine(ref,qty) {
+	console.log('lessRefLine', ref, qty);
+	
+	if(!qty) qty = 1;
+	
+	$tr = $t.find('tr[barcode='+ref+'],tr[ref='+ref+']').first();
+	if($tr.length>0) {
+	
+		qty = parseInt( $tr.find('td[rel="scanned"]').text() ) - qty;
+		
+		if(qty>=0) {
+			updateQtyLine($tr, qty);	
+		}
+		
+	}
+	else{
+		console.log('lessRefLine::notExisteCheckPackage', ref, qty);
+		
+		$.ajax({
+			url: "script/interface.php",
+			dataType: "json",
+			crossDomain: true,
+			data: {
+				get:'mistake-data'
+				,ref:ref
+			}
+			
+		}).done(function(data) {
+			
+			if(data.isPackage>0) {
+				
+				for(refSP in data.TProduct) {
+					qtySP = parseFloat(data.TProduct[refSP]);
+					console.log('appel addLine', refSP, qtySP);
+					lessRefLine(refSP, qtySP*qty);
+				}
+				
+			}
+			
+			
+		});
+		
+	}
+}
+
+function updateQtyLine($tr, qty) {
+	$tr.find('td[rel="scanned"]').text(qty);
+	qtyToShip = parseInt( $tr.find('td[rel="toShip"]').text() ) ;
+	
+	if(!$tr.hasClass('mistake')) {
+		$tr.removeClass();
+		if(qty<qtyToShip) {
+			$tr.addClass('needMore');
+		}
+		else if(qty>qtyToShip) {
+			$tr.addClass('tooMuch');
+		}
+		else if(qty == qtyToShip) {
+			$tr.addClass('goodQty');
+		}
+		console.log(qty,qtyToShip);
+		
+	}
+		
+}
+
+function addRefLine(ref, qty) {
+	console.log('addRefLine', ref, qty);
+	
+	if(!qty) qty = 1;
+	
+	$tr = $t.find('tr[barcode='+ref+'],tr[ref='+ref+']').first(); // récupère le 1er avec code barre ou ref
+		
+	if($tr.length>0) {
+		console.log('lineExist', ref);	
+		qty = parseInt( $tr.find('td[rel="scanned"]').text() ) + qty;
+		
+		updateQtyLine($tr, qty);
+	}
+	else{
+		console.log('mistake',ref);
+		var $trMistake = $('<tr class="mistake" barcode="'+ref+'" class="mistake"><td rel="label">'+ref+'</td><td>0</td><td rel="scanned">1</td><td><span class="glyphicon glyphicon-question-sign"></td></tr>');
+		$t.append($trMistake);
+		
+		$.ajax({
+			url: "script/interface.php",
+			dataType: "json",
+			crossDomain: true,
+			data: {
+				get:'mistake-data'
+				,ref:ref
+			}
+			
+		}).done(function(data) {
+			
+			if(data.isPackage>0) {
+				
+				for(refSP in data.TProduct) {
+					qtySP = parseFloat(data.TProduct[refSP]);
+					console.log('appel addLine', refSP, qtySP);
+					addRefLine(refSP, qtySP*qty);
+				}
+				
+				$trMistake.remove();
+			
+				
+			}
+			else{
+				$trMistake.find('[rel=label]').html(data.label);
+			}
+			
+		});
+		
+	}
+}
+
 function refreshListStatus() {
 	$t = $('#list-expedition-details>tbody');
-	$t.find('[rel=scanned]').html(0);
+	//$t.find('[rel=scanned]').html(0);
 	
 	var TCode = $('#codereader').val().split("\n");
 	
 	var TDelete = $('#codereaderDelete').val().split("\n");
 	
 	for(d in TDelete) {
-		for(x in TCode) {
-			
-			if(TDelete[d] == TCode[x]) {
-				delete TCode[x];
-				break;
-			}
-						
-		}
+		refDelete = TDelete[d];
+		if(!refDelete) continue;
+		lessRefLine(refDelete,1);
 	}
 	
-	$('#codereaderDelete').val('');
+	$('#codereaderDelete,#codereader').val('');
 	
 	var codes = "";
 	
@@ -164,40 +275,14 @@ function refreshListStatus() {
 
 		codes+=ref+"\n";
 	
-		$tr = $t.find('tr[barcode='+ref+'],tr[ref='+ref+']').first(); // récupère le 1er avec code barre ou ref
-		
-		if($tr.length>0) {
-			console.log(ref);	
-			qtyToShip = parseInt( $tr.find('td[rel="toShip"]').text() ) ;
-			qty = parseInt( $tr.find('td[rel="scanned"]').text() ) +1;
-			$tr.find('td[rel="scanned"]').text(qty);
-			
-			if(!$tr.hasClass('mistake')) {
-				$tr.removeClass();
-				if(qty<qtyToShip) {
-					$tr.addClass('needMore');
-				}
-				else if(qty>qtyToShip) {
-					$tr.addClass('tooMuch');
-				}
-				else if(qty == qtyToShip) {
-					$tr.addClass('goodQty');
-				}
-				console.log(qty,qtyToShip);
-				
-			}
-			
-		}
-		else{
-			console.log('mistake',ref);
-			$t.append('<tr class="mistake" ref="'+ref+'" class="mistake"><td>'+ref+'</td><td>0</td><td rel="scanned">1</td><td><span class="glyphicon glyphicon-question-sign"></td></tr>');
-		}
+		addRefLine(ref);
 		
 	}
 	
-	$('#codereader').val(codes);
+//	$('#codereader').val(codes);
+	
 	$t.find('tr.mistake').each(function(i,item) {
-		if(parseInt($(item).find('tr[rel=scanned]').text()) == 0) {
+		if(parseInt($(item).find('[rel=scanned]').text()) == 0) {
 			$(item).remove();	
 		}
 		

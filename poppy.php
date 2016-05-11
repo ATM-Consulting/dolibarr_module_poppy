@@ -120,6 +120,12 @@
 				});
 				
 				
+				<?php
+				if($fk_shipping_selected>0) {
+					echo 'setShipping('.$fk_shipping_selected.');';
+				}
+				?>
+
 				_focus_barcode();	
 			});
 			

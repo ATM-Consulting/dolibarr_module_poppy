@@ -30,6 +30,11 @@ function _get(&$PDOdb,$case) {
 			print 'ok';
 			
 			break;
+		case 'mistake-data':
+			__out(_getMistakeData($PDOdb, GETPOST('ref')),'json');
+			
+			break;	
+		
 		default:
 			
 			break;
@@ -40,7 +45,43 @@ function _get(&$PDOdb,$case) {
 function _put(&$PDOdb,$case) {
 	
 	switch ($case) {
+		
 	}
+}
+
+function _getMistakeData(&$PDOdb, $ref) {
+	
+	global $langs,$db,$user,$conf;
+		
+	$Tab=array('label'=>$ref, 'isPackage'=>0,'TProduct'=>array());
+	
+	$PDOdb->Execute("SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE barcode=:ref OR ref=:ref ",array('ref'=>$ref));
+	$obj = $PDOdb->Get_line();
+	
+	if($obj->rowid>0) {
+		$p=new Product($db);
+		$p->fetch($obj->rowid);
+		$Tab['label'] = $p->label;
+		
+		$TColis = $p->getChildsArbo($p->id, true);
+		if(count($TColis)>0) {
+			$Tab['isPackage'] = 1;
+			
+			foreach($TColis as $idSousProd=>$data) {
+				$ps = new Product($db);
+				if($ps->fetch($idSousProd)>0) {
+					$Tab['TProduct'][$ps->ref] = $data[1];
+				}
+
+			}
+		}
+		
+	}
+	else{
+		$Tab['label'].=' '.$langs->trans('Unknown');
+	}
+	
+	return $Tab;
 }
 
 function _getShippingDetails(&$PDOdb, $id) {

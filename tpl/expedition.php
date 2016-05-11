@@ -17,17 +17,4 @@
 
 ?></ul><?php
 
-if(GETPOST('fk_shipping')>0) {
-	
-	?>
-	<script type="text/javascript">
-	$(document).ready(function() {
-		setShipping(<?php echo (int)GETPOST('fk_shipping') ?>);
-	});
-	</script>
-	<?php
-	
-	
-}
-
 	
