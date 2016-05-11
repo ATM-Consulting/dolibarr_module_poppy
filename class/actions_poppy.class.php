@@ -70,6 +70,15 @@ class ActionsPoppy
 			
 			$langs->load('poppy@poppy');
 			if ($object->statut==1) {
+				
+				$res = $hookmanager->executeHooks('addMoreActionsPoppyPopup',$parameters,$object,$action);
+				$TButton = array();
+				if(!empty($hookmanager->resArray)) {
+					$TButton = $hookmanager->resArray;
+				}
+				
+				$buttons = json_encode($TButton);
+				
 			  	?>
 			  	<script type="text/javascript">
 			  	$(document).ready(function() {
@@ -84,7 +93,7 @@ class ActionsPoppy
 						modal:true
 						,width:"90%"
 						,height:$(window).height() - 50
-					
+						,buttons:<?php echo $buttons ?>
 					});
 			  		
 			  	}

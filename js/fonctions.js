@@ -211,7 +211,7 @@ function addRefLine(ref, qty) {
 		console.log('lineExist', ref);	
 		qty = parseInt( $tr.find('td[rel="scanned"]').text() ) + qty;
 		
-		updateQtyLine($tr, qty);
+		var res = updateQtyLine($tr, qty);
 	}
 	else{
 		console.log('mistake',ref);
@@ -280,16 +280,39 @@ function refreshListStatus() {
 	}
 	
 //	$('#codereader').val(codes);
+	controlQty();
 	
-	$t.find('tr.mistake').each(function(i,item) {
-		if(parseInt($(item).find('[rel=scanned]').text()) == 0) {
-			$(item).remove();	
+}
+
+function controlQty() {
+	$t = $('#list-expedition-details>tbody');
+	
+	var ok = true;
+	$t.find('tr').each(function(i,item) {
+		$tr = $(item);
+		
+		if($tr.hasClass('mistake') && parseInt($tr.find('[rel=scanned]').text()) == 0) {
+			$tr.remove();	
+		}
+		else{
+			qtyToShip = parseInt( $tr.find('td[rel="toShip"]').text() ) ;
+			qtyScanned = parseInt( $tr.find('td[rel="scanned"]').text() ) ;
+			
+			if($tr.hasClass('tooMuch') || $tr.hasClass('needMore') || $tr.hasClass('mistake') || qtyToShip!=qtyScanned) {
+				ok = false;	
+			}
 		}
 		
 		
 	});
+		console.log('controlQty',ok);
+	if(ok) {
 		
-	
+		$('[control-poppy=ifok]').show();	
+	}
+	else{
+		$('[control-poppy=ifok]').hide();
+	}
 }
 
 function checkLoginStatus() {

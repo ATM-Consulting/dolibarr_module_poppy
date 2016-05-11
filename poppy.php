@@ -14,6 +14,10 @@
 
 	$fk_shipping_selected = GETPOST('fk_shipping');
 
+	$hookmanager->initHooks(array('poppy'));
+	
+	$object=stdClass;
+
 	$PDOdb = new TPDOdb;
 	
 ?><!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> -->
@@ -52,9 +56,9 @@
 	                    if($conf->expedition->enabled && $user->rights->expedition->lire){
 	                    	
 							if(!empty($conf->global->POPPY_RETRICT_TO_ONE) && $fk_shipping_selected>0) {
-								$expedition = new Expedition($db);
-								$expedition->fetch($fk_shipping_selected);
-								echo '<h1>'.$expedition->ref.'</h1>';
+								$object = new Expedition($db);
+								$object->fetch($fk_shipping_selected);
+								echo '<h1>'.$object->ref.'</h1>';
 							}
 							else {
 						    ?>
@@ -95,6 +99,10 @@
 		<div class="floating-buttons">	
 			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-plus" onclick="_focus_barcode();" id="codeflag" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('addHelp'); ?>"></button>
 			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-trash" onclick="_focus_barcode_delete();" id="codeflagdelete" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('removeHelp'); ?>"></button>
+			<?php
+				$parameters=array('fk_shipping_selected'=>$fk_shipping_selected);$action='';
+				$hookmanager->executeHooks('addMoreActionsPoppy',$parameters, $object,$action);
+			?>
 			<div style="position:absolute; top:-500px; left: -500px; overflow:hidden;width:1px;height:1px; ">
 				<textarea id="codereader" cols="100" rows="10" onKeyPress="enterpressalert(event, this)"></textarea>
 				<textarea id="codereaderDelete" cols="20" rows="2" onKeyPress="enterpressalert(event, this)"></textarea>
@@ -119,12 +127,13 @@
 					$('#codeflagdelete').removeClass('activate');
 				});
 				
-				
 				<?php
 				if($fk_shipping_selected>0) {
 					echo 'setShipping('.$fk_shipping_selected.');';
 				}
 				?>
+
+				controlQty();
 
 				_focus_barcode();	
 			});
