@@ -255,6 +255,11 @@ class modPoppy extends DolibarrModules
 		dol_include_once('/poppy/config.php');
 		dol_include_once('/poppy/script/create-maj-base.php');
 
+
+		dol_include_once('/core/class/extrafields.class.php');
+        $extrafields=new ExtraFields($this->db);
+		$res = $extrafields->addExtraField('isPrepared', 'Colis préparé', 'select', 0, '', 'expedition',0, 0,'', array("options"=> array('Non','Oui')));
+	
 		$result=$this->_load_tables('/poppy/sql/');
 
 		return $this->_init($sql, $options);

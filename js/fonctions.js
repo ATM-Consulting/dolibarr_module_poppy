@@ -9,7 +9,10 @@ $(document).ready(function( event, ui ) {
 	
 } );
 
+var fk_shipping_selected = 0;
+
 function setShipping(id) {
+	fk_shipping_selected = id;
 	
 	$("#search_shipping").val(id);
 	$('ul#list-shipping li').removeClass('active');
@@ -308,11 +311,26 @@ function controlQty() {
 		console.log('controlQty',ok);
 	if(ok) {
 		
+		isPrepared = 1;
 		$('[control-poppy=ifok]').show();	
 	}
 	else{
+		isPrepared = 0;
+		
 		$('[control-poppy=ifok]').hide();
 	}
+	
+	$.ajax({
+			url: "script/interface.php",
+			dataType: "json",
+			crossDomain: true,
+			data: {
+				put:'shipping-prepared'
+				,isPrepared:isPrepared
+				,fk_shipping:fk_shipping_selected
+			}
+			
+	});
 }
 
 function checkLoginStatus() {

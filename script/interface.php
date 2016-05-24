@@ -43,9 +43,22 @@ function _get(&$PDOdb,$case) {
 }
 
 function _put(&$PDOdb,$case) {
+	global $db,$langs,$conf,$user;
 	
 	switch ($case) {
-		
+		case 'shipping-prepared':
+			$e=new Expedition($db);
+			if($e->fetch(GETPOST('fk_shipping'))>0) {
+				$e->array_options['options_isPrepared'] = GETPOST('isPrepared');
+				$e->insertExtraFields();
+				var_dump($e);
+				echo 1;
+			}
+			else{
+				echo 0;
+			}
+			
+			break;
 	}
 }
 
