@@ -75,6 +75,7 @@
 	                            	<table  id="list-expedition-details" class="table table-striped" style="font-size:18px;">
 								    <thead>
 								      <tr>
+								        <th><?php echo $langs->trans('EAN'); ?></th>
 								        <th><?php echo $langs->trans('Product'); ?></th>
 								        <th><?php echo $langs->trans('QtyToShip'); ?></th>
 								        <th><?php echo $langs->trans('QtyScanned'); ?></th>

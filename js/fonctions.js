@@ -110,7 +110,7 @@ function reload_list_shipping_details(id) {
 	
 		for(x in data) {
 			obj = data[x];
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="label">'+obj.product_label+'</td><td rel="toShip">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toShip">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
 		}
 
 	});
@@ -173,7 +173,7 @@ function lessRefLine(ref,qty) {
 				
 			}
 			
-			
+			controlQty();
 		});
 		
 	}
@@ -197,7 +197,7 @@ function updateQtyLine($tr, qty) {
 		console.log(qty,qtyToShip);
 		
 	}
-		
+					
 }
 
 function addRefLine(ref, qty) {
@@ -215,7 +215,7 @@ function addRefLine(ref, qty) {
 	}
 	else{
 		console.log('mistake',ref);
-		var $trMistake = $('<tr class="mistake" barcode="'+ref+'" class="mistake"><td rel="label">'+ref+'</td><td>0</td><td rel="scanned">1</td><td><span class="glyphicon glyphicon-question-sign"></td></tr>');
+		var $trMistake = $('<tr class="mistake" barcode="'+ref+'" class="mistake"><td rel="ean">'+ref+'</td><td rel="label">'+ref+'</td><td>0</td><td rel="scanned">'+qty+'</td><td><span class="glyphicon glyphicon-question-sign"></td></tr>');
 		$t.append($trMistake);
 		
 		$.ajax({
@@ -239,12 +239,12 @@ function addRefLine(ref, qty) {
 				
 				$trMistake.remove();
 			
-				
 			}
 			else{
 				$trMistake.find('[rel=label]').html(data.label);
+				
 			}
-			
+			controlQty();
 		});
 		
 	}
