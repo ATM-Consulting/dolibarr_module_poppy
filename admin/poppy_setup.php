@@ -121,6 +121,17 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_POPPY_RETRICT_TO_ONE">';
 echo ajax_constantonoff('POPPY_RETRICT_TO_ONE');
 print '</form>';
+print '</td></tr>';// Example with a yes / no select
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT">';
+echo ajax_constantonoff('POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT');
+print '</form>';
 print '</td></tr>';
 
 if($conf->categorie->enabled) {

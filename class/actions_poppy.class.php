@@ -113,4 +113,61 @@ class ActionsPoppy
 			return -1;
 		}
 	}
+	
+	/**
+	 * Inclusion d'un JS sur le formulaire d'ajout de ligne pour permettre l'ajout de ligne via un scan douchette
+	 */
+	function formAddObjectLine($parameters, &$object, &$action, $hookmanager) {
+		global $conf;
+		?>
+		<script type="text/javascript">
+			
+			$(document).ready(function() {
+				$('#search_idprod').on('keypress', function( e ) {
+					if(e.which == 13) {
+						
+						poppySelectProd($('#search_idprod').val());
+						
+						e.preventDefault();
+						return false;
+					}
+				});
+			});
+			
+			function poppySelectProd(id_prod) {
+			
+				$.ajax({
+					url:"<?php echo dol_buildpath('/product/ajax/products.php',1); ?>"
+					,data:{
+						htmlname:"idprod"
+						,outjson:1
+						,price_level:<?php echo (int)$object->thirdparty->price_level ?>
+						,type:""
+						,mode:1
+						,status:1
+						,finished:2
+						,idprod:id_prod
+						,
+					}
+					,dataType:"json"
+				}).done(function(data) {
+					console.log(data);
+					$('#idprod').val(data[0].key);
+					$('#idprod').change();
+					<?php
+					if(!empty($conf->global->POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT)) {
+						echo '$("#qty").focus().select();';
+					}
+					else{
+						echo 'window.setTimeout(function() { $("#addline").click() }, 300);';	
+					}
+					
+					?>
+				});
+			
+			}
+			
+		</script>
+		<?php
+	}
 }
