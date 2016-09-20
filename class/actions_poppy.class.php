@@ -113,4 +113,14 @@ class ActionsPoppy
 			return -1;
 		}
 	}
+	
+	/**
+	 * Inclusion d'un JS sur le formulaire d'ajout de ligne pour permettre l'ajout de ligne via un scan douchette
+	 */
+	function formAddObjectLine($parameters, &$object, &$action, $hookmanager) {
+		$url = dol_buildpath('/poppy/js/formAddObjectLine.js',1);
+		?>
+		<script type="text/javascript" src="<?php echo $url ?>"></script>
+		<?php
+	}
 }
