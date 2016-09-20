@@ -118,6 +118,7 @@ class ActionsPoppy
 	 * Inclusion d'un JS sur le formulaire d'ajout de ligne pour permettre l'ajout de ligne via un scan douchette
 	 */
 	function formAddObjectLine($parameters, &$object, &$action, $hookmanager) {
+		global $conf;
 		?>
 		<script type="text/javascript">
 			
@@ -153,10 +154,17 @@ class ActionsPoppy
 					console.log(data);
 					$('#idprod').val(data[0].key);
 					$('#idprod').change();
-					window.setTimeout(function() { $('#addline').click() }, 300);
+					<?php
+					if(!empty($conf->global->POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT)) {
+						echo '$("#qty").focus().select();';
+					}
+					else{
+						echo 'window.setTimeout(function() { $("#addline").click() }, 300);';	
+					}
+					
+					?>
 				});
 			
-			//http://127.0.0.1/dolibarr/4.0/htdocs/product/ajax/products.php?htmlname=idprod&outjson=1&price_level=0&type=&mode=1&status=1&finished=2&idprod=P01_C
 			}
 			
 		</script>
