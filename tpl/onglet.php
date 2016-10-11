@@ -13,7 +13,8 @@
 		<div class="collapse navbar-collapse " id="menu-poppy">
 		    <ul class="nav navbar-nav" role="tablist">
 		    	
-			  <?php  if($conf->expedition->enabled && $user->rights->expedition->lire){ ?><li><a href="#list-expedition" id="onglet2"  role="tab" data-toggle="tab"><?php echo $langs->trans('Shipping'); ?></a></li><?php } ?>
+			  <?php  if($conf->expedition->enabled && $user->rights->expedition->lire){ ?><li><a href="#panel-expedition" role="tab" data-toggle="tab"><?php echo $langs->trans('Shipping'); ?></a></li><?php } ?>
+			  <?php  if($conf->stock->enabled){ ?><li><a href="#panel-reception" role="tab" data-toggle="tab"><?php echo $langs->trans('Reception'); ?></a></li><?php } ?>
 			</ul>
 			
 			<ul class="nav navbar-nav navbar-right">	

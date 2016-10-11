@@ -10,6 +10,7 @@ $(document).ready(function( event, ui ) {
 } );
 
 var fk_shipping_selected = 0;
+var fk_reception_selected = 0;
 
 function setShipping(id) {
 	fk_shipping_selected = id;
@@ -21,6 +22,17 @@ function setShipping(id) {
 	reload_list_shipping_details(id);
 	
 }
+function setReception(id) {
+	fk_reception_selected = id;
+	
+	$("#search_shipping").val(id);
+	$('ul#list-shipping li').removeClass('active');
+	$('ul#list-shipping li[exp-id='+id+']').addClass('active');
+	$('#codereader').val('');
+	reload_list_reception_details(id);
+	
+}
+
 
 function changeUser(fk_user) {
 	
@@ -91,6 +103,32 @@ function aff_popup(id_task,onglet,action){
 		$('#confirm-add-time').modal('hide');
 	});
 	
+}
+
+function reload_list_reception_details(id) {
+	$t = $('#list-reception-details>tbody');
+	$t.empty();
+	
+	$.ajax({
+		url: "script/interface.php",
+		dataType: "json",
+		crossDomain: true,
+		async : false,
+		data: {
+			   get:'reception-details'
+			   ,json : 1
+			   ,id: id
+		}
+	})
+	.then(function (data){
+		//console.log(data);
+	
+		for(x in data) {
+			obj = data[x];
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toReceive">'+obj.qty_receive+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+		}
+
+	});
 }
 
 function reload_list_shipping_details(id) {

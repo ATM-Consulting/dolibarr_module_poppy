@@ -4,11 +4,10 @@
 	dol_include_once('/user/class/usergroup.class.php');
 	dol_include_once('/core/lib/date.lib.php');
 	dol_include_once('/expedition/class/expedition.class.php');
-	
-	/*if (!($user->admin || $user->rights->tasklist->all->read)) {
-    	accessforbidden();
-	}
-	*/
+	dol_include_once('/product/stock/class/entrepot.class.php');
+	dol_include_once('/core/lib/fourn.lib.php');
+	dol_include_once('/fourn/class/fournisseur.commande.class.php');
+	dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 	
 	$langs->load('poppy@poppy');
 
@@ -50,7 +49,7 @@
 			?>
 			<!-- Tab panes -->
 			<div class="tab-content">
-			  <div class="tab-pane active" id="list-expedition">
+			  <div class="tab-pane active" id="panel-expedition">
 			  		<div class="row">
 			  		<?php 
 	                    if($conf->expedition->enabled && $user->rights->expedition->lire){
@@ -62,7 +61,7 @@
 							}
 							else {
 						    ?>
-	                            <!-- Affichage de l'onglet "Postes de travail" -->
+	                            <!-- Affichage de l'onglet "Expédition" -->
 	                            
 	                            <div class="col-md-4">
 	                            	<?php require('./tpl/expedition.php'); ?>
@@ -93,7 +92,49 @@
 	                ?>
 	               </div>
 			  </div>
-			  
+			  <div class="tab-pane" id="panel-reception">
+			  		<div class="row">
+			  		<?php 
+	                    if($conf->stock->enabled){
+	                    	
+							if(!empty($conf->global->POPPY_RETRICT_TO_ONE) && $fk_reception_selected>0) {
+								$object = new CommandeFournisseur($db);
+								$object->fetch($fk_reception_selected);
+								echo '<h1>'.$object->ref.'</h1>';
+							}
+							else {
+						    ?>
+	                            <!-- Affichage de l'onglet "Réception" -->
+	                            
+	                            <div class="col-md-4">
+	                            	<?php require('./tpl/reception.php'); ?>
+	                            </div>
+	                            
+	                       <?php
+	                       }
+	                       ?>
+	                            <div class="col-md-8">
+	                            	<table  id="list-reception-details" class="table table-striped" style="font-size:18px;">
+								    <thead>
+								      <tr>
+								        <th><?php echo $langs->trans('EAN'); ?></th>
+								        <th><?php echo $langs->trans('Product'); ?></th>
+								        <th><?php echo $langs->trans('QtyToRecept'); ?></th>
+								        <th><?php echo $langs->trans('QtyScanned'); ?></th>
+								        <th>&nbsp;</th>
+								      </tr>
+								    </thead>
+								    <tbody>
+								    </tbody>
+								    </table>
+	                            	
+	                            </div>
+	                        <?php
+	                    }
+	
+	                ?>
+	               </div>
+			  </div>
 			</div>
 		    
 			<?php require('./tpl/popup.php'); ?>

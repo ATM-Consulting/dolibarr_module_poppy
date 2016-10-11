@@ -22,8 +22,13 @@
 function _get(&$PDOdb,$case) {
 	switch ($case) {
 		case 'shipping-details':
-            $TTask = _getShippingDetails($PDOdb,GETPOST('id'));
-			__out($TTask, 'json');
+            $Tab = _getShippingDetails($PDOdb,GETPOST('id'));
+			__out($Tab, 'json');
+			break;
+		
+		case 'reception-details';
+            $Tab = _getReceptionDetails($PDOdb,GETPOST('id'));
+			__out($Tab, 'json');
 			break;
 		
 		case 'logged-status':
@@ -97,14 +102,26 @@ function _getMistakeData(&$PDOdb, $ref) {
 	return $Tab;
 }
 
+function _getReceptionDetails(&$PDOdb, $id) {
+	
+	global $db,$langs,$user,$conf;
+	$Tab=array();
+	
+	$object = new CommandeFournisseur($db);
+	$object->fetch($id);
+	
+	
+	
+}
+
 function _getShippingDetails(&$PDOdb, $id) {
 	global $db,$langs,$user,$conf;
 	$Tab=array();
 	
-	$expedition = new Expedition($db);
-	$expedition->fetch($id);
+	$object = new Expedition($db);
+	$object->fetch($id);
 	
-	foreach($expedition->lines as &$line) {
+	foreach($object->lines as &$line) {
 		
 		if($line->fk_product>0) {
 			
