@@ -12,8 +12,11 @@ $(document).ready(function( event, ui ) {
 var fk_shipping_selected = 0;
 var fk_reception_selected = 0;
 
+var scan_mode = "shipping";
+
 function setShipping(id) {
 	fk_shipping_selected = id;
+	scan_mode = "shipping";
 	
 	$("#search_shipping").val(id);
 	$('ul#list-shipping li').removeClass('active');
@@ -25,9 +28,11 @@ function setShipping(id) {
 function setReception(id) {
 	fk_reception_selected = id;
 	
-	$("#search_shipping").val(id);
-	$('ul#list-shipping li').removeClass('active');
-	$('ul#list-shipping li[exp-id='+id+']').addClass('active');
+	scan_mode = "reception";
+	
+	$("#search_reception").val(id);
+	$('ul#list-reception li').removeClass('active');
+	$('ul#list-reception li[reception-id='+id+']').addClass('active');
 	$('#codereader').val('');
 	reload_list_reception_details(id);
 	
@@ -125,7 +130,13 @@ function reload_list_reception_details(id) {
 	
 		for(x in data) {
 			obj = data[x];
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toReceive">'+obj.qty_receive+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+			
+			barcodef = '';
+			for(y in obj.TSupplierPrice) {
+				barcodef+=obj.TSupplierPrice[y].fourn_ref+',';
+			}
+			
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'" barcodef="'+barcodef+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toReceive">'+obj.qty_receive+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
 		}
 
 	});
@@ -180,7 +191,7 @@ function lessRefLine(ref,qty) {
 	
 	if(!qty) qty = 1;
 	
-	$tr = $t.find('tr[barcode='+ref+'],tr[ref='+ref+']').first();
+	$tr = $t.find(getScanPattern(ref)).first();
 	if($tr.length>0) {
 	
 		qty = parseInt( $tr.find('td[rel="scanned"]').text() ) - qty;
@@ -241,12 +252,23 @@ function updateQtyLine($tr, qty) {
 					
 }
 
+function getScanPattern(ref) {
+	if(scan_mode == "reception") {
+		return 'tr[barcode='+ref+'],tr[ref='+ref+'],tr[barcodef*='+ref+',]';
+	}
+	else{
+		return 'tr[barcode='+ref+'],tr[ref='+ref+']';
+	}
+	
+}
+
 function addRefLine(ref, qty) {
 	console.log('addRefLine', ref, qty);
 	
 	if(!qty) qty = 1;
 	
-	$tr = $t.find('tr[barcode='+ref+'],tr[ref='+ref+']').first(); // récupère le 1er avec code barre ou ref
+	
+	$tr = $t.find(getScanPattern(ref)).first(); // récupère le 1er avec code barre ou ref
 		
 	if($tr.length>0) {
 		console.log('lineExist', ref);	
@@ -292,8 +314,6 @@ function addRefLine(ref, qty) {
 }
 
 function refreshListStatus() {
-	$t = $('#list-expedition-details>tbody');
-	//$t.find('[rel=scanned]').html(0);
 	
 	var TCode = $('#codereader').val().split("\n");
 	

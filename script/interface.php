@@ -107,11 +107,48 @@ function _getReceptionDetails(&$PDOdb, $id) {
 	global $db,$langs,$user,$conf;
 	$Tab=array();
 	
+	dol_include_once('/fourn/class/fournisseur.commande.class.php');
+	dol_include_once('/fourn/class/fournisseur.product.class.php');
+	
 	$object = new CommandeFournisseur($db);
 	$object->fetch($id);
+	foreach($object->lines as &$line) {
+		
+		if($line->fk_product>0) {
+			$addLine = true;
+			
+			$line->product = new Product($db);
+			$line->product->fetch($line->fk_product);
+			
+			$product_supplier = new ProductFournisseur($db);
+			$line->TSupplierPrice = $product_supplier->list_product_fournisseur_price($line->fk_product);
+		//	var_dump($line->product->ref,$line->TSupplierPrice);exit;
+			$line->barcode = $line->product->barcode;
+			if($conf->categorie->enabled && !empty($conf->global->POPPY_EXCLUDE_CATEGORY)) {
 	
+				$TCatExclude = explode(',',$conf->global->POPPY_EXCLUDE_CATEGORY);
 	
+				dol_include_once('/categories/class/categorie.class.php');
+				$c = new Categorie($db);
+				$cats = $c->containing($line->fk_product,Categorie::TYPE_PRODUCT);
+				foreach($cats as $cat) {
+					if(in_array($cat->id, $TCatExclude)) {
+						$addLine= false;
+						break;
+					}
+				}
+			}
+			
+			$line->qty_receive = $line->qty; //TODO remain quantity
+			
+			if($addLine) $Tab[] = $line;
+		}
+		
+		
+		
+	}
 	
+	return $Tab;	
 }
 
 function _getShippingDetails(&$PDOdb, $id) {

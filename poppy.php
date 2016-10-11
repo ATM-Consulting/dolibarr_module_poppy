@@ -12,6 +12,7 @@
 	$langs->load('poppy@poppy');
 
 	$fk_shipping_selected = GETPOST('fk_shipping');
+	$fk_reception_selected= GETPOST('fk_reception');
 
 	$hookmanager->initHooks(array('poppy'));
 	
@@ -39,7 +40,7 @@
 	    <div class="container-fluid">
 	    	
 			<?php 
-			if(!empty($conf->global->POPPY_RETRICT_TO_ONE) && $fk_shipping_selected>0) {
+			if(!empty($conf->global->POPPY_RETRICT_TO_ONE) && ($fk_shipping_selected>0 || $fk_reception_selected>0)) {
 				null;	
 			}
 			else{
@@ -136,6 +137,21 @@
 	               </div>
 			  </div>
 			</div>
+			<script type="text/javascript">
+			<?php
+		    if(!empty($conf->global->POPPY_RETRICT_TO_ONE)) {
+		    	if($fk_shipping_selected>0) {
+		    		echo '$("#panel-expedition").addClass("active");$("#panel-reception").removeClass("active");';
+		    	}
+				elseif($fk_reception_selected>0){
+					echo '$("#panel-reception").addClass("active");$("#panel-expedition").removeClass("active");';
+				}
+				
+		    }
+			
+			
+		    ?>
+		    </script>
 		    
 			<?php require('./tpl/popup.php'); ?>
 		<div class="floating-buttons">	
@@ -173,6 +189,11 @@
 				if($fk_shipping_selected>0) {
 					echo 'setShipping('.$fk_shipping_selected.');';
 				}
+				else if($fk_reception_selected>0){
+					echo 'setReception('.$fk_reception_selected.');';
+				}
+				
+				
 				?>
 
 				controlQty();
