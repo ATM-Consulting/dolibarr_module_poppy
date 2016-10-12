@@ -10,9 +10,13 @@ $(document).ready(function( event, ui ) {
 } );
 
 var fk_shipping_selected = 0;
+var fk_reception_selected = 0;
+
+var scan_mode = "shipping";
 
 function setShipping(id) {
 	fk_shipping_selected = id;
+	scan_mode = "shipping";
 	
 	$("#search_shipping").val(id);
 	$('ul#list-shipping li').removeClass('active');
@@ -21,6 +25,19 @@ function setShipping(id) {
 	reload_list_shipping_details(id);
 	
 }
+function setReception(id) {
+	fk_reception_selected = id;
+	
+	scan_mode = "reception";
+	
+	$("#search_reception").val(id);
+	$('ul#list-reception li').removeClass('active');
+	$('ul#list-reception li[reception-id='+id+']').addClass('active');
+	$('#codereader').val('');
+	reload_list_reception_details(id);
+	
+}
+
 
 function changeUser(fk_user) {
 	
@@ -93,6 +110,38 @@ function aff_popup(id_task,onglet,action){
 	
 }
 
+function reload_list_reception_details(id) {
+	$t = $('#list-reception-details>tbody');
+	$t.empty();
+	
+	$.ajax({
+		url: "script/interface.php",
+		dataType: "json",
+		crossDomain: true,
+		async : false,
+		data: {
+			   get:'reception-details'
+			   ,json : 1
+			   ,id: id
+		}
+	})
+	.then(function (data){
+		//console.log(data);
+	
+		for(x in data) {
+			obj = data[x];
+			
+			barcodef = '';
+			for(y in obj.TSupplierPrice) {
+				barcodef+=obj.TSupplierPrice[y].fourn_ref+',';
+			}
+			
+			$t.append('<tr ref="'+obj.ref+'" fk-line="'+obj.id+'" fk-product="'+obj.fk_product+'" barcode="'+obj.barcode+'" barcodef="'+barcodef+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_receive+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+		}
+
+	});
+}
+
 function reload_list_shipping_details(id) {
 	$t = $('#list-expedition-details>tbody');
 	$t.empty();
@@ -113,7 +162,7 @@ function reload_list_shipping_details(id) {
 	
 		for(x in data) {
 			obj = data[x];
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toShip">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
 		}
 
 	});
@@ -142,7 +191,7 @@ function lessRefLine(ref,qty) {
 	
 	if(!qty) qty = 1;
 	
-	$tr = $t.find('tr[barcode='+ref+'],tr[ref='+ref+']').first();
+	$tr = $t.find(getScanPattern(ref)).first();
 	if($tr.length>0) {
 	
 		qty = parseInt( $tr.find('td[rel="scanned"]').text() ) - qty;
@@ -184,23 +233,33 @@ function lessRefLine(ref,qty) {
 
 function updateQtyLine($tr, qty) {
 	$tr.find('td[rel="scanned"]').text(qty);
-	qtyToShip = parseInt( $tr.find('td[rel="toShip"]').text() ) ;
+	qtytoTest = parseInt( $tr.find('td[rel="toTest"]').text() ) ;
 	
 	if(!$tr.hasClass('mistake')) {
 		$tr.removeClass();
-		if(qty<qtyToShip) {
+		if(qty<qtytoTest) {
 			$tr.addClass('needMore');
 		}
-		else if(qty>qtyToShip) {
+		else if(qty>qtytoTest) {
 			$tr.addClass('tooMuch');
 		}
-		else if(qty == qtyToShip) {
+		else if(qty == qtytoTest) {
 			$tr.addClass('goodQty');
 		}
-		console.log(qty,qtyToShip);
+		console.log(qty,qtytoTest);
 		
 	}
 					
+}
+
+function getScanPattern(ref) {
+	if(scan_mode == "reception") {
+		return '#list-reception-details tr[barcode='+ref+'],tr[ref='+ref+'],tr[barcodef*="'+ref+',"]';
+	}
+	else{
+		return '#list-expedition-details tr[barcode='+ref+'],tr[ref='+ref+']';
+	}
+	
 }
 
 function addRefLine(ref, qty) {
@@ -208,7 +267,8 @@ function addRefLine(ref, qty) {
 	
 	if(!qty) qty = 1;
 	
-	$tr = $t.find('tr[barcode='+ref+'],tr[ref='+ref+']').first(); // récupère le 1er avec code barre ou ref
+	
+	$tr = $('body').find(getScanPattern(ref)).first(); // récupère le 1er avec code barre ou ref
 		
 	if($tr.length>0) {
 		console.log('lineExist', ref);	
@@ -254,8 +314,6 @@ function addRefLine(ref, qty) {
 }
 
 function refreshListStatus() {
-	$t = $('#list-expedition-details>tbody');
-	//$t.find('[rel=scanned]').html(0);
 	
 	var TCode = $('#codereader').val().split("\n");
 	
@@ -287,8 +345,32 @@ function refreshListStatus() {
 	
 }
 
+function _getQuantityToReception() {
+	
+	$t = $('#list-reception-details>tbody');
+	$t.find('tr').each(function(i,item) {
+		$tr = $(item);
+		qtyScanned = parseInt( $tr.find('td[rel="scanned"]').text() ) ;
+		fk_line = $tr.attr('fk-line');
+		
+		if(qtyScanned>0)window.parent.$("input[name='TOrderLine["+fk_line+"\][qty]']").val(qtyScanned).css({ 'background-color' : '#5cb85c'});
+		
+		
+	});
+	
+	window.parent.$("#popPoppy").dialog("close");
+	
+}
+
 function controlQty() {
-	$t = $('#list-expedition-details>tbody');
+	
+	if(scan_mode == 'reception') {
+		$t = $('#list-reception-details>tbody');
+	}
+	else{
+		$t = $('#list-expedition-details>tbody');
+	}
+	
 	
 	var ok = true;
 	$t.find('tr').each(function(i,item) {
@@ -298,10 +380,10 @@ function controlQty() {
 			$tr.remove();	
 		}
 		else{
-			qtyToShip = parseInt( $tr.find('td[rel="toShip"]').text() ) ;
+			qtyToTest = parseInt( $tr.find('td[rel="toTest"]').text() ) ;
 			qtyScanned = parseInt( $tr.find('td[rel="scanned"]').text() ) ;
 			
-			if($tr.hasClass('tooMuch') || $tr.hasClass('needMore') || $tr.hasClass('mistake') || qtyToShip!=qtyScanned) {
+			if($tr.hasClass('tooMuch') || $tr.hasClass('needMore') || $tr.hasClass('mistake') || qtyToTest!=qtyScanned) {
 				ok = false;	
 			}
 		}
@@ -320,17 +402,22 @@ function controlQty() {
 		$('[control-poppy=ifok]').hide();
 	}
 	
-	$.ajax({
-			url: "script/interface.php",
-			dataType: "json",
-			crossDomain: true,
-			data: {
-				put:'shipping-prepared'
-				,isPrepared:isPrepared
-				,fk_shipping:fk_shipping_selected
-			}
-			
-	});
+	
+	if(scan_mode == 'shipping') {
+	
+		$.ajax({
+				url: "script/interface.php",
+				dataType: "json",
+				crossDomain: true,
+				data: {
+					put:'shipping-prepared'
+					,isPrepared:isPrepared
+					,fk_shipping:fk_shipping_selected
+				}
+				
+		});
+	
+	}
 }
 
 function checkLoginStatus() {

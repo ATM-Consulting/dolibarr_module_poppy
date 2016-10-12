@@ -4,15 +4,15 @@
 	dol_include_once('/user/class/usergroup.class.php');
 	dol_include_once('/core/lib/date.lib.php');
 	dol_include_once('/expedition/class/expedition.class.php');
-	
-	/*if (!($user->admin || $user->rights->tasklist->all->read)) {
-    	accessforbidden();
-	}
-	*/
+	dol_include_once('/product/stock/class/entrepot.class.php');
+	dol_include_once('/core/lib/fourn.lib.php');
+	dol_include_once('/fourn/class/fournisseur.commande.class.php');
+	dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 	
 	$langs->load('poppy@poppy');
 
 	$fk_shipping_selected = GETPOST('fk_shipping');
+	$fk_reception_selected= GETPOST('fk_reception');
 
 	$hookmanager->initHooks(array('poppy'));
 	
@@ -40,7 +40,7 @@
 	    <div class="container-fluid">
 	    	
 			<?php 
-			if(!empty($conf->global->POPPY_RETRICT_TO_ONE) && $fk_shipping_selected>0) {
+			if(!empty($conf->global->POPPY_RETRICT_TO_ONE) && ($fk_shipping_selected>0 || $fk_reception_selected>0)) {
 				null;	
 			}
 			else{
@@ -50,7 +50,7 @@
 			?>
 			<!-- Tab panes -->
 			<div class="tab-content">
-			  <div class="tab-pane active" id="list-expedition">
+			  <div class="tab-pane active" id="panel-expedition">
 			  		<div class="row">
 			  		<?php 
 	                    if($conf->expedition->enabled && $user->rights->expedition->lire){
@@ -62,7 +62,7 @@
 							}
 							else {
 						    ?>
-	                            <!-- Affichage de l'onglet "Postes de travail" -->
+	                            <!-- Affichage de l'onglet "Expédition" -->
 	                            
 	                            <div class="col-md-4">
 	                            	<?php require('./tpl/expedition.php'); ?>
@@ -93,14 +93,78 @@
 	                ?>
 	               </div>
 			  </div>
-			  
+			  <div class="tab-pane" id="panel-reception">
+			  		<div class="row">
+			  		<?php 
+	                    if($conf->stock->enabled){
+	                    	
+							if(!empty($conf->global->POPPY_RETRICT_TO_ONE) && $fk_reception_selected>0) {
+								$object = new CommandeFournisseur($db);
+								$object->fetch($fk_reception_selected);
+								echo '<h1>'.$object->ref.'</h1>';
+							}
+							else {
+						    ?>
+	                            <!-- Affichage de l'onglet "Réception" -->
+	                            
+	                            <div class="col-md-4">
+	                            	<?php require('./tpl/reception.php'); ?>
+	                            </div>
+	                            
+	                       <?php
+	                       }
+	                       ?>
+	                            <div class="col-md-8">
+	                            	<table  id="list-reception-details" class="table table-striped" style="font-size:18px;">
+								    <thead>
+								      <tr>
+								        <th><?php echo $langs->trans('EAN'); ?></th>
+								        <th><?php echo $langs->trans('Product'); ?></th>
+								        <th><?php echo $langs->trans('QtyToRecept'); ?></th>
+								        <th><?php echo $langs->trans('QtyScanned'); ?></th>
+								        <th>&nbsp;</th>
+								      </tr>
+								    </thead>
+								    <tbody>
+								    </tbody>
+								    </table>
+	                            	
+	                            </div>
+	                        <?php
+	                    }
+	
+	                ?>
+	               </div>
+			  </div>
 			</div>
+			<script type="text/javascript">
+			<?php
+		    if(!empty($conf->global->POPPY_RETRICT_TO_ONE)) {
+		    	if($fk_shipping_selected>0) {
+		    		echo '$("#panel-expedition").addClass("active");$("#panel-reception").removeClass("active");';
+		    	}
+				elseif($fk_reception_selected>0){
+					echo '$("#panel-reception").addClass("active");$("#panel-expedition").removeClass("active");';
+				}
+				
+		    }
+			
+			
+		    ?>
+		    </script>
 		    
 			<?php require('./tpl/popup.php'); ?>
 		<div class="floating-buttons">	
 			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-plus" onclick="_focus_barcode();" id="codeflag" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('addHelp'); ?>"></button>
 			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-trash" onclick="_focus_barcode_delete();" id="codeflagdelete" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('removeHelp'); ?>"></button>
 			<?php
+			
+				if($fk_reception_selected>0) {
+					
+					echo '<button type="button" class="btn btn-success btn-circle btn-xl glyphicon glyphicon-thumbs-up" onclick="_getQuantityToReception();" id="codeflagreception" data-toggle="tooltip" data-placement="top" title="'.$langs->trans('receptionDoneHelp').'"></button>';		
+					
+				}
+			
 				$parameters=array('fk_shipping_selected'=>$fk_shipping_selected);$action='';
 				$hookmanager->executeHooks('addMoreActionsPoppy',$parameters, $object,$action);
 			?>
@@ -132,6 +196,11 @@
 				if($fk_shipping_selected>0) {
 					echo 'setShipping('.$fk_shipping_selected.');';
 				}
+				else if($fk_reception_selected>0){
+					echo 'setReception('.$fk_reception_selected.');';
+				}
+				
+				
 				?>
 
 				controlQty();

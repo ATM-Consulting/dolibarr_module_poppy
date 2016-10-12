@@ -45,27 +45,26 @@ body {
 #codeflag.activate {
 	background-color:#33ff33;
 }
-#list-expedition-details tr td.state span {
+#list-expedition-details tr td.state span,#list-reception-details tr td.state span {
 	display:none;
 }
-#list-expedition-details tr.tooMuch td.state span {
+#list-expedition-details tr.tooMuch td.state span,#list-reception-details tr.tooMuch td.state span {
 	display:inline;
 	color:black;
 }
-#list-expedition-details tr.mistake {
+#list-expedition-details tr.mistake,#list-reception-details tr.mistake {
 	background-color : red;
 }
-#list-expedition-details tr.needMore {
+#list-expedition-details tr.needMore,#list-reception-details tr.needMore {
 	background-color : #FF6633;
 		
 }
-#list-expedition-details tr.goodQty {
+#list-expedition-details tr.goodQty,#list-reception-details tr.goodQty {
 	background-color : green;
 		
 }
 
-
-#list-expedition-details tr.tooMuch {
+#list-expedition-details tr.tooMuch,#list-reception-details tr.tooMuch {
 	background-color : #FF6600;
 	
 }

@@ -1,7 +1,6 @@
 <?php
 
-	//Récupération de la liste des postes de travail
-	$disabled = ($user->rights->workstation->all->lire) ? 0 : 1;
+	//Récupération de la liste des expédition
 	
 	$sql="SELECT rowid, ref FROM ".MAIN_DB_PREFIX."expedition WHERE entity IN (".getEntity('shipping',1).") AND fk_statut IN (0,1)";
 	$TShipping = TRequeteCore::_get_id_by_sql($PDOdb, $sql,'ref','rowid');

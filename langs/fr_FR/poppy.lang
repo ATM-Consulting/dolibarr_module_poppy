@@ -15,3 +15,6 @@ POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT=Saisir la quantité après la sélection du
 
 addHelp=Si vert, alors la douchette ajoute des produits au colis. Si orange, cliquez pour ajouter
 removeHelp=Si fond rouge, alors la douchette enlève des produits du colis. Si fond bleu cliquez pour supprimer.
+receptionDoneHelp=Basculer les quantités scannées dans la réception de votre commande en cours
+QtyToRecept=Quantité à réceptionner
+btScannet=Utiliser la scannette
