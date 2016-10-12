@@ -136,7 +136,7 @@ function reload_list_reception_details(id) {
 				barcodef+=obj.TSupplierPrice[y].fourn_ref+',';
 			}
 			
-			$t.append('<tr ref="'+obj.ref+'" fk-product="'+obj.fk_product+'" barcode="'+obj.barcode+'" barcodef="'+barcodef+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_receive+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" fk-line="'+obj.id+'" fk-product="'+obj.fk_product+'" barcode="'+obj.barcode+'" barcodef="'+barcodef+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_receive+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
 		}
 
 	});
@@ -342,6 +342,23 @@ function refreshListStatus() {
 	
 //	$('#codereader').val(codes);
 	controlQty();
+	
+}
+
+function _getQuantityToReception() {
+	
+	$t = $('#list-reception-details>tbody');
+	$t.find('tr').each(function(i,item) {
+		$tr = $(item);
+		qtyScanned = parseInt( $tr.find('td[rel="scanned"]').text() ) ;
+		fk_line = $tr.attr('fk-line');
+		console.log(qtyScanned, fk_line,window.parent.$("input[name='TOrderLine["+fk_line+"\][qty]']"));
+		window.parent.$("input[name='TOrderLine["+fk_line+"\][qty]']").val(qtyScanned);
+		
+		
+	});
+	
+	window.parent.$("#popPoppy").dialog("close");
 	
 }
 

@@ -63,6 +63,48 @@ class ActionsPoppy
 	{
 		$error = 0; // Error counter
 		
+		if (in_array('receptionstockcard', explode(':', $parameters['context']))) {
+			global $langs;
+			$langs->load('poppy@poppy');
+			
+			if ($object->statut == 3 || $object->statut == 4 || $object->statut == 5) {
+			
+			$res = $hookmanager->executeHooks('addMoreActionsPoppyPopup',$parameters,$object,$action);
+			$TButton = array();
+			if(!empty($hookmanager->resArray)) {
+				$TButton = $hookmanager->resArray;
+			}
+			
+			$buttons = json_encode($TButton);
+			
+			?>
+		  	<script type="text/javascript">
+		  	$(document).ready(function() {
+			  	$a = $('<a href="javascript:popPoppy()" class="butAction"><?php echo $langs->trans('btScannet') ?></a>');
+			  	$('tr.liste_titre td[rel=QtyToDispatchShort]').first().append($a);
+		  	});
+		  	
+		  	function popPoppy() {
+		  		
+		  		$("#popPoppy").remove();
+		  		$div = $('<div id="popPoppy"><iframe width="100%" height="100%" frameborder="0" src="<?php echo dol_buildpath('/poppy/poppy.php?fk_reception='.$object->id,1) ?>"></iframe></div>');
+				
+				$('body').append($div);
+				
+				$("#popPoppy").dialog({
+					modal:true
+					,width:"90%"
+					,height:$(window).height() - 50
+					,buttons:<?php echo $buttons ?>
+				});
+		  		
+		  	}
+		  	
+		  	</script>
+		  	<?php
+		  	
+			}
+		}
 
 		if (in_array('expeditioncard', explode(':', $parameters['context'])))
 		{
