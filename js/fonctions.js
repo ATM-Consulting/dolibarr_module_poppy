@@ -352,8 +352,8 @@ function _getQuantityToReception() {
 		$tr = $(item);
 		qtyScanned = parseInt( $tr.find('td[rel="scanned"]').text() ) ;
 		fk_line = $tr.attr('fk-line');
-		console.log(qtyScanned, fk_line,window.parent.$("input[name='TOrderLine["+fk_line+"\][qty]']"));
-		window.parent.$("input[name='TOrderLine["+fk_line+"\][qty]']").val(qtyScanned);
+		
+		if(qtyScanned>0)window.parent.$("input[name='TOrderLine["+fk_line+"\][qty]']").val(qtyScanned).css({ 'background-color' : '#5cb85c'});
 		
 		
 	});
