@@ -158,6 +158,13 @@
 			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-plus" onclick="_focus_barcode();" id="codeflag" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('addHelp'); ?>"></button>
 			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-trash" onclick="_focus_barcode_delete();" id="codeflagdelete" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('removeHelp'); ?>"></button>
 			<?php
+			
+				if($fk_reception_selected>0) {
+					
+					echo '<button type="button" class="btn btn-success btn-circle btn-xl glyphicon glyphicon-thumbs-up" onclick="_getQuantityToReception();" id="codeflagreception" data-toggle="tooltip" data-placement="top" title="'.$langs->trans('receptionDoneHelp').'"></button>';		
+					
+				}
+			
 				$parameters=array('fk_shipping_selected'=>$fk_shipping_selected);$action='';
 				$hookmanager->executeHooks('addMoreActionsPoppy',$parameters, $object,$action);
 			?>

@@ -136,7 +136,7 @@ function reload_list_reception_details(id) {
 				barcodef+=obj.TSupplierPrice[y].fourn_ref+',';
 			}
 			
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'" barcodef="'+barcodef+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_receive+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" fk-product="'+obj.fk_product+'" barcode="'+obj.barcode+'" barcodef="'+barcodef+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_receive+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
 		}
 
 	});
