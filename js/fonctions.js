@@ -6,7 +6,15 @@ $(window).resize(function() {
 $(document).ready(function( event, ui ) {
 	resizeAll();
 	checkLoginStatus();
+	$("#addOneProduct").click(function() {
+		console.log($("#codereader"), $(this).attr('barcode'));
+		$("#codereader").val($(this).attr('barcode'));
+		
+		var e = $.Event('keypress');
+	    e.which = 13; // Character 'Enter'
+	    $('#codereader').trigger(e);
 	
+	});
 } );
 
 var fk_shipping_selected = 0;
@@ -162,7 +170,7 @@ function reload_list_shipping_details(id) {
 	
 		for(x in data) {
 			obj = data[x];
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td><td><input class="glyphicon glyphicon-plus" id="addOneProduct" type="button" value="+" barcode="'+obj.barcode+'" /></td></tr>');
 		}
 
 	});
