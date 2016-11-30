@@ -7,7 +7,7 @@ $(window).resize(function() {
 $(document).ready(function( event, ui ) {
 	resizeAll();
 	checkLoginStatus();
-	$("[name*=addOneProduct]").click(function() {
+	$('.tab-content').on('click',"[name*=addOneProduct]",function() {
 		//console.log($("#codereader"), $(this).attr('barcode'));
 		$("#codereader").val($(this).attr('barcode'));
 		
