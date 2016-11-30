@@ -1,3 +1,4 @@
+<script type="text/javascript">
 
 $(window).resize(function() {
 	resizeAll();
@@ -426,6 +427,13 @@ function controlQty() {
 		});
 	
 	}
+	
+	<?php if(!empty($conf->global->POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING) && !empty($conf->global->POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPED)) { ?>
+	if(ok) {
+		window.parent.location.href='<?php echo dol_buildpath('/expedition/card.php', 2).'?action=valid&id='; ?>'+fk_shipping_selected;
+	}
+	<?php } ?>
+	
 }
 
 function checkLoginStatus() {
@@ -452,3 +460,5 @@ function checkLoginStatus() {
 	});
 
 }
+
+</script>

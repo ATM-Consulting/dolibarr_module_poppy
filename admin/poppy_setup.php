@@ -144,6 +144,17 @@ print '<input type="hidden" name="action" value="set_POPPY_ADD_BUTTON_ON_DRAFT_S
 echo ajax_constantonoff('POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING');
 print '</form>';
 print '</td></tr>';
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPED").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPED">';
+echo ajax_constantonoff('POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPED');
+print '</form>';
+print '</td></tr>';
 
 if($conf->categorie->enabled) {
 	
