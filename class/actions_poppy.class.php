@@ -61,6 +61,8 @@ class ActionsPoppy
 	 */
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
+		global $conf;
+		
 		$error = 0; // Error counter
 		
 		if (in_array('receptionstockcard', explode(':', $parameters['context']))) {
@@ -111,7 +113,8 @@ class ActionsPoppy
 			global $langs;
 			
 			$langs->load('poppy@poppy');
-			if ($object->statut==1) {
+			if ($object->statut==1 && empty($conf->global->POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING)
+				|| empty($object->statut) && !empty($conf->global->POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING)) {
 				
 				$res = $hookmanager->executeHooks('addMoreActionsPoppyPopup',$parameters,$object,$action);
 				$TButton = array();

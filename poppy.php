@@ -2,6 +2,7 @@
 
 	require('config.php');
 	dol_include_once('/user/class/usergroup.class.php');
+	dol_include_once('/core/lib/functions.lib.php');
 	dol_include_once('/core/lib/date.lib.php');
 	dol_include_once('/expedition/class/expedition.class.php');
 	dol_include_once('/product/stock/class/entrepot.class.php');
@@ -214,7 +215,7 @@
 		</div>
 		
 		
-		<script src="js/fonctions.js" type="text/javascript"></script>
+		<?php dol_include_once('/poppy/js/fonctions.js.php'); ?>
 		<script type="text/javascript">
 			_focus_barcode();
 		</script>

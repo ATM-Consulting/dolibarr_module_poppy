@@ -1,3 +1,4 @@
+<script type="text/javascript">
 
 $(window).resize(function() {
 	resizeAll();
@@ -6,7 +7,24 @@ $(window).resize(function() {
 $(document).ready(function( event, ui ) {
 	resizeAll();
 	checkLoginStatus();
+	$('.tab-content').on('click',"[name*=addOneProduct]",function() {
+		//console.log($("#codereader"), $(this).attr('barcode'));
+		$("#codereader").val($(this).attr('barcode'));
+		
+		var e = $.Event('keypress');
+	    e.which = 13; // Character 'Enter'
+	    $('#codereader').trigger(e);
 	
+	});
+	$('.tab-content').on('click',"[name*=delOneProduct]",function() {
+		//console.log($("#codereader"), $(this).attr('barcode'));
+		$("#codereaderDelete").val($(this).attr('barcode'));
+		
+		var e = $.Event('keypress');
+	    e.which = 13; // Character 'Enter'
+	    $('#codereaderDelete').trigger(e);
+	
+	});
 } );
 
 var fk_shipping_selected = 0;
@@ -162,7 +180,7 @@ function reload_list_shipping_details(id) {
 	
 		for(x in data) {
 			obj = data[x];
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td><td><button class="glyphicon glyphicon-minus btn-default" name="delOneProduct' + obj.fk_origin_line + '" type="button" value="-" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td><td><input class="glyphicon btn-default" name="addOneProduct' + obj.fk_origin_line + '" type="button" value="+" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td></tr>');
 		}
 
 	});
@@ -254,10 +272,10 @@ function updateQtyLine($tr, qty) {
 
 function getScanPattern(ref) {
 	if(scan_mode == "reception") {
-		return '#list-reception-details tr[barcode='+ref+'],tr[ref='+ref+'],tr[barcodef*="'+ref+',"]';
+		return '#list-reception-details tr[barcode="'+ref+'"],tr[ref='+ref+'],tr[barcodef*="'+ref+',"]';
 	}
 	else{
-		return '#list-expedition-details tr[barcode='+ref+'],tr[ref='+ref+']';
+		return '#list-expedition-details tr[barcode="'+ref+'"],tr[ref="'+ref+'"]';
 	}
 	
 }
@@ -418,6 +436,13 @@ function controlQty() {
 		});
 	
 	}
+	
+	<?php if(!empty($conf->global->POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING) && !empty($conf->global->POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPED)) { ?>
+	if(ok) {
+		window.parent.location.href='<?php echo dol_buildpath('/expedition/card.php', 2).'?action=valid&id='; ?>'+fk_shipping_selected;
+	}
+	<?php } ?>
+	
 }
 
 function checkLoginStatus() {
@@ -444,3 +469,5 @@ function checkLoginStatus() {
 	});
 
 }
+
+</script>

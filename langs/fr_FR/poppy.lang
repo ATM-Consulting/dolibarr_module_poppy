@@ -12,6 +12,8 @@ QtyScanned=Qté scannée
 POPPY_RETRICT_TO_ONE=Restreindre le colissage à l'expédition sélectionnée via bouton
 POPPY_EXCLUDE_CATEGORY=Exclure ces catégories de produit du colisage
 POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT=Saisir la quantité après la sélection du produit sur propale/commande/facture
+POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING=Préparer le colis lorsque l'expédition est au statut "brouillon"
+POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPED=Proposer la validation de l'expédition si toutes les quantités ont été ajoutées au colis (uniquement si la préparation d'expédition se fait au statut brouillon)
 
 addHelp=Si vert, alors la douchette ajoute des produits au colis. Si orange, cliquez pour ajouter
 removeHelp=Si fond rouge, alors la douchette enlève des produits du colis. Si fond bleu cliquez pour supprimer.
