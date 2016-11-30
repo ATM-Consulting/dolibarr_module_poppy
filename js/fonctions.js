@@ -191,7 +191,7 @@ function lessRefLine(ref,qty) {
 	
 	if(!qty) qty = 1;
 	
-	$tr = $t.find(getScanPattern(ref)).first();
+	$tr = $('body').find(getScanPattern(ref)).first();
 	if($tr.length>0) {
 	
 		qty = parseInt( $tr.find('td[rel="scanned"]').text() ) - qty;
