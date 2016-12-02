@@ -158,6 +158,10 @@ function _getShippingDetails(&$PDOdb, $id) {
 	$object = new Expedition($db);
 	$object->fetch($id);
 	
+	dol_include_once('/hevea/class/hevea_tools.class.php');
+	$hevea_tools = new HeveaTools($db);
+	$hevea_tools->reorderObjectLines($object);
+	
 	foreach($object->lines as &$line) {
 		
 		if($line->fk_product>0) {
