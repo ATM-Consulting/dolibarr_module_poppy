@@ -11,6 +11,7 @@
 	dol_include_once('/fourn/class/fournisseur.commande.dispatch.class.php');
 	
 	$langs->load('poppy@poppy');
+	$langs->load('orders');
 
 	$fk_shipping_selected = GETPOST('fk_shipping');
 	$fk_reception_selected= GETPOST('fk_reception');
@@ -79,6 +80,8 @@
 								        <th><?php echo $langs->trans('EAN'); ?></th>
 								        <th><?php echo $langs->trans('Product'); ?></th>
 								        <th><?php echo $langs->trans('Emplacement'); ?></th>
+								        <th><?php echo $langs->trans('QtyEmplacement'); ?></th>
+								        <th><?php echo $langs->trans('QtyOrdered'); ?></th>
 								        <th><?php echo $langs->trans('QtyToShip'); ?></th>
 								        <th><?php echo $langs->trans('QtyScanned'); ?></th>
 								        <th>&nbsp;</th>

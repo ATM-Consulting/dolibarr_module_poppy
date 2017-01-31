@@ -9,6 +9,7 @@ PoppyAbout = A propos du module Poppy
 PreparePackage=Préparer le colis
 QtyToShip=Qté à expédier
 QtyScanned=Qté scannée
+QtyEmplacement=Qté adressage
 POPPY_RETRICT_TO_ONE=Restreindre le colissage à l'expédition sélectionnée via bouton
 POPPY_EXCLUDE_CATEGORY=Exclure ces catégories de produit du colisage
 POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT=Saisir la quantité après la sélection du produit sur propale/commande/facture
