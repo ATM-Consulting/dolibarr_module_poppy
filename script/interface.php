@@ -170,6 +170,7 @@ function _getShippingDetails(&$PDOdb, $id) {
 			
 			$line->product = new Product($db);
 			$line->product->fetch($line->fk_product);
+			$line->product->load_stock();
 			
 			$line->barcode = $line->product->barcode;
 			if($conf->categorie->enabled) {
