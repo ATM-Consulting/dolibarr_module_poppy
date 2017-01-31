@@ -78,6 +78,7 @@
 								      <tr>
 								        <th><?php echo $langs->trans('EAN'); ?></th>
 								        <th><?php echo $langs->trans('Product'); ?></th>
+								        <th><?php echo $langs->trans('Emplacement'); ?></th>
 								        <th><?php echo $langs->trans('QtyToShip'); ?></th>
 								        <th><?php echo $langs->trans('QtyScanned'); ?></th>
 								        <th>&nbsp;</th>
