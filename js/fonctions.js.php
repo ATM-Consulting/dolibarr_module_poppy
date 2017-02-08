@@ -187,6 +187,7 @@ function reload_list_shipping_details(id) {
 	
 		for(x in data) {
 			obj = data[x];
+			if (obj.product.array_options['options_emplacement'] == null || obj.product.array_options['options_emplacement'] == 0) console.log('Extrafield "Adressage" non renseigné sur la fiche produit ['+obj.product.id+']');
 			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="emplacement">'+obj.entrepot_name+'</td><td rel="qte_dispo">'+obj.product.stock_warehouse[obj.product.array_options['options_emplacement']].real+'</td><td rel="qty_asked">'+obj.qty_asked+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td><td><button class="glyphicon glyphicon-minus btn-default" name="delOneProduct' + obj.fk_origin_line + '" type="button" value="-" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td><td><input class="glyphicon btn-default" name="addOneProduct' + obj.fk_origin_line + '" type="button" value="+" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td></tr>');
 		}
 
