@@ -40,6 +40,7 @@ var fk_reception_selected = 0;
 var scan_mode = "shipping";
 
 function setShipping(id) {
+	$('#list-expedition-details').data('fk_shipping', id);
 	fk_shipping_selected = id;
 	scan_mode = "shipping";
 	
@@ -168,7 +169,7 @@ function reload_list_reception_details(id) {
 }
 
 function reload_list_shipping_details(id) {
-	$t = $('#list-expedition-details>tbody');
+	var $t = $('#list-expedition-details>tbody');
 	$t.empty();
 	
 	$.ajax({
@@ -184,12 +185,10 @@ function reload_list_shipping_details(id) {
 	})
 	.then(function (data){
 		//console.log(data);
-	
 		for(x in data) {
-			obj = data[x];
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td><td><button class="glyphicon glyphicon-minus btn-default" name="delOneProduct' + obj.fk_origin_line + '" type="button" value="-" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td><td><input class="glyphicon btn-default" name="addOneProduct' + obj.fk_origin_line + '" type="button" value="+" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td></tr>');
+			var obj = data[x];
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td data-expeditiondet-id="'+obj.id+'" class="poppydet_qty_scanned" rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td><td><button class="glyphicon glyphicon-minus btn-default" name="delOneProduct' + obj.fk_origin_line + '" type="button" value="-" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td><td><input class="glyphicon btn-default" name="addOneProduct' + obj.fk_origin_line + '" type="button" value="+" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td></tr>');
 		}
-
 	});
 	
 }
@@ -202,7 +201,49 @@ function _focus_barcode_delete() {
 
 function _apply_qty()
 {
+	var fk_shipping = $('#list-expedition-details').data('fk_shipping');
+	var TDetIdQty = new Array();
+	var TTd = $('#list-expedition-details td.poppydet_qty_scanned');
 	
+	for (var i = 0; i < TTd.length; i++)
+	{
+		if (typeof TDetIdQty[$(TTd[i]).data('expeditiondet-id')] == 'undefined') TDetIdQty[$(TTd[i]).data('expeditiondet-id')] = 0;
+		
+		TDetIdQty[$(TTd[i]).data('expeditiondet-id')] += parseFloat($(TTd[i]).text());
+	}
+	
+	
+	if (fk_shipping && TDetIdQty.length > 0)
+	{
+		$.ajax({
+			url: 'script/interface.php'
+			,type: 'POST'
+			,dataType: 'json'
+			,data: {
+				put: 'updateShippingQty'
+				,fk_shipping: fk_shipping
+				,TDetIdQty: TDetIdQty
+				,json: 1
+			}
+			
+		}).done(function(response) {
+			console.log(response);
+			if (response.error == 0)
+			{
+				// TODO reload page if possible ?
+				$('#codeflag_apply_qty').addClass('btn-success');
+				setTimeout(function() {
+					$('#codeflag_apply_qty').removeClass('btn-success');
+				}, 2000);
+			}
+			else
+			{
+				alert(response.lasterror);
+			}
+		}).fail(function() {
+			alert('Erreur javascript : quantités non mis à jour');
+		});
+	}
 }
 
 function _focus_barcode() {
