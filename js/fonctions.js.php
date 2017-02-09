@@ -40,6 +40,7 @@ var fk_reception_selected = 0;
 var scan_mode = "shipping";
 
 function setShipping(id) {
+	$('#list-expedition-details').data('fk_shipping', id);
 	fk_shipping_selected = id;
 	scan_mode = "shipping";
 	
@@ -168,7 +169,7 @@ function reload_list_reception_details(id) {
 }
 
 function reload_list_shipping_details(id) {
-	$t = $('#list-expedition-details>tbody');
+	var $t = $('#list-expedition-details>tbody');
 	$t.empty();
 	
 	$.ajax({
@@ -184,13 +185,11 @@ function reload_list_shipping_details(id) {
 	})
 	.then(function (data){
 		//console.log(data);
-	
 		for(x in data) {
-			obj = data[x];
+			var obj = data[x];
 			if (obj.product.array_options['options_emplacement'] == null || obj.product.array_options['options_emplacement'] == 0) console.log('Extrafield "Adressage" non renseigné sur la fiche produit ['+obj.product.id+']');
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="emplacement">'+obj.entrepot_name+'</td><td rel="qte_dispo">'+obj.product.stock_warehouse[obj.product.array_options['options_emplacement']].real+'</td><td rel="qty_asked">'+obj.qty_asked+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td><td><button class="glyphicon glyphicon-minus btn-default" name="delOneProduct' + obj.fk_origin_line + '" type="button" value="-" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td><td><input class="glyphicon btn-default" name="addOneProduct' + obj.fk_origin_line + '" type="button" value="+" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="emplacement">'+obj.entrepot_name+'</td><td rel="qte_dispo">'+obj.product.stock_warehouse[obj.product.array_options['options_emplacement']].real+'</td><td rel="qty_asked">'+obj.qty_asked+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td data-expeditiondet-id="'+obj.id+'" class="poppydet_qty_scanned" rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td><td><button class="glyphicon glyphicon-minus btn-default" name="delOneProduct' + obj.fk_origin_line + '" type="button" value="-" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td><td><input class="glyphicon btn-default" name="addOneProduct' + obj.fk_origin_line + '" type="button" value="+" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td></tr>');
 		}
-
 	});
 	
 }
@@ -199,6 +198,53 @@ function reload_list_shipping_details(id) {
 function _focus_barcode_delete() {
 	
 	$('#codereaderDelete').focus();
+}
+
+function _apply_qty()
+{
+	var fk_shipping = $('#list-expedition-details').data('fk_shipping');
+	var TDetIdQty = new Array();
+	var TTd = $('#list-expedition-details td.poppydet_qty_scanned');
+	
+	for (var i = 0; i < TTd.length; i++)
+	{
+		if (typeof TDetIdQty[$(TTd[i]).data('expeditiondet-id')] == 'undefined') TDetIdQty[$(TTd[i]).data('expeditiondet-id')] = 0;
+		
+		TDetIdQty[$(TTd[i]).data('expeditiondet-id')] += parseFloat($(TTd[i]).text());
+	}
+	
+	
+	if (fk_shipping && TDetIdQty.length > 0)
+	{
+		$.ajax({
+			url: 'script/interface.php'
+			,type: 'POST'
+			,dataType: 'json'
+			,data: {
+				put: 'updateShippingQty'
+				,fk_shipping: fk_shipping
+				,TDetIdQty: TDetIdQty
+				,json: 1
+			}
+			
+		}).done(function(response) {
+			console.log(response);
+			if (response.error == 0)
+			{
+				// TODO reload page if possible ?
+				$('#codeflag_apply_qty').addClass('btn-success');
+				setTimeout(function() {
+					$('#codeflag_apply_qty').removeClass('btn-success');
+				}, 2000);
+			}
+			else
+			{
+				alert(response.lasterror);
+			}
+		}).fail(function() {
+			alert('Erreur javascript : quantités non mis à jour');
+		});
+	}
 }
 
 function _focus_barcode() {
@@ -214,39 +260,9 @@ function enterpressalert(e, textarea){
 
 function lessRefLine(ref,qty) {
 	console.log('lessRefLine', ref, qty);
-	
 	if(!qty) qty = 1;
 	
-	$tr = null;
-	
-	$('body').find(getScanPattern(ref)).each(function(i,item) {
-		var $item = $(item);
-		
-		if($item.attr('lastclicked')) {
-			$tr = $item;
-			return false;
-		}
-	});
-
-	if(!$tr) {
-		$('body').find(getScanPattern(ref)).each(function(i,item) {
-			
-			var $item = $(item);
-			
-			qty_to_test = parseInt( $item.find('td[rel="toTest"]').text() );
-			qty_scan = parseInt( $item.find('td[rel="scanned"]').text() );
-			
-			if(qty_to_test>qty_scan) {
-				$tr = $item;
-				return false;
-			}
-			
-		}); // récupère le 1er avec code barre ou ref
-		
-	}	 
-		
-	if(!$tr) $tr = $('body').find(getScanPattern(ref)).first();
-	
+	var $tr = getTr(ref);
 	
 	if($tr.length>0) {
 	
@@ -318,42 +334,43 @@ function getScanPattern(ref) {
 	
 }
 
+function getTr(ref)
+{
+	console.log('CALL FONCTION :: getTr("'+ref+'")');
+	var $tr = {length:0};
+	var TTr = $('body').find(getScanPattern(ref));
+	
+	$tr = TTr.filter('[lastclicked=1]');
+	
+	if($tr.length == 0)
+	{
+		TTr.each(function(i,item) {
+			var $item = $(item);
+			
+			var qty_to_test = parseInt( $item.find('td[rel="toTest"]').text() );
+			var qty_scan = parseInt( $item.find('td[rel="scanned"]').text() );
+			
+			if (qty_to_test > qty_scan)
+			{
+				$tr = $item;
+				console.log('tr RE-FOUND');
+				return false;
+			}
+		}); // récupère le 1er TR avec code barre ou ref qui a une quantité scannée inférieur à ce qui est attendu
+	}
+	
+	if($tr.length == 0) $tr = $('body').find(getScanPattern(ref)).first();
+	
+	return $tr;
+}
+
 function addRefLine(ref, qty) {
 	console.log('addRefLine', ref, qty);
 	
 	if(!qty) qty = 1;
 	
+	var $tr = getTr(ref);
 	
-	$tr = null;
-	
-	$('body').find(getScanPattern(ref)).each(function(i,item) {
-		var $item = $(item);
-		
-		if($item.attr('lastclicked')) {
-			$tr = $item;
-			return false;
-		}
-	});
-
-	if(!$tr) {
-		$('body').find(getScanPattern(ref)).each(function(i,item) {
-			
-			var $item = $(item);
-			
-			qty_to_test = parseInt( $item.find('td[rel="toTest"]').text() );
-			qty_scan = parseInt( $item.find('td[rel="scanned"]').text() );
-			
-			if(qty_to_test>qty_scan) {
-				$tr = $item;
-				return false;
-			}
-			
-		}); // récupère le 1er avec code barre ou ref
-		
-	}	 
-		
-	if(!$tr) $tr = $('body').find(getScanPattern(ref)).first();
-		
 	if($tr.length>0) {
 		console.log('lineExist', ref);	
 		qty = parseInt( $tr.find('td[rel="scanned"]').text() ) + qty;

@@ -64,6 +64,9 @@ function _put(&$PDOdb,$case) {
 			}
 			
 			break;
+		case 'updateShippingQty':
+			__out(_updateShippingQty(GETPOST('fk_shipping', 'int'), GETPOST('TDetIdQty', 'array')));
+			break;
 	}
 }
 
@@ -196,4 +199,71 @@ function _getShippingDetails(&$PDOdb, $id) {
 	}
 	
 	return $Tab;
+}
+
+
+function _updateShippingQty($fk_shipping, $TDetIdQty)
+{
+	global $db, $conf, $langs;
+	
+	$langs->load('poppy@poppy');
+	
+	$response = new stdClass();
+	$response->error = 0;
+	$response->TError = array();
+	$response->lasterror = '';
+	
+	if (empty($conf->global->POPPY_CAN_APPLY_THE_QTY_SCANNED))
+	{
+		$response->lasterror = $langs->transnoentities('poppy_error_trying_use_disabled_method');
+		$response->TError[] = $response->lasterror; $response->error++;
+	}
+	
+	if (empty($fk_shipping))
+	{
+		$response->lasterror = $langs->transnoentities('poppy_error_fk_shipping_empty');
+		$response->TError[] = $response->lasterror; $response->error++;
+	}
+	
+	if (empty($response->error))
+	{
+		$shipping = new Expedition($db);
+		if ($shipping->fetch($fk_shipping) > 0)
+		{
+			
+			if ($shipping->statut == 0) // brouillon
+			{
+				$db->begin();
+				
+				foreach ($shipping->lines as &$line)
+				{
+					if (isset($TDetIdQty[$line->id]))
+					{
+						$res = $line->setValueFrom('qty', $TDetIdQty[$line->id]);
+						if ($res < 0)
+						{
+							$response->lasterror = $line->db->lasterror;
+							$response->TError[] = $response->lasterror; $response->error++;
+							break;
+						}
+					}
+				}
+
+				if (empty($response->error)) $db->commit();
+				else $db->rollback();
+			}
+			else
+			{
+				$response->lasterror = $langs->transnoentities('poppy_warning_shipping_not_in_draft');
+				$response->TError[] = $response->lasterror; $response->error++;
+			}
+		}
+		else
+		{
+			$response->lasterror = $shipping->error;
+			$response->TError[] = $response->lasterror; $response->error++;
+		}
+	}
+	
+	return $response;
 }
