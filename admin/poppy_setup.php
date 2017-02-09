@@ -180,6 +180,18 @@ if($conf->categorie->enabled) {
 	
 }
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("POPPY_CAN_APPLY_THE_QTY_SCANNED").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_POPPY_CAN_APPLY_THE_QTY_SCANNED">';
+echo ajax_constantonoff('POPPY_CAN_APPLY_THE_QTY_SCANNED');
+print '</form>';
+print '</td></tr>';
+
 print '</table>';
 
 llxFooter();

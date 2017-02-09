@@ -156,6 +156,9 @@
 		    
 			<?php require('./tpl/popup.php'); ?>
 		<div class="floating-buttons">	
+			<?php if (!empty($conf->global->POPPY_CAN_APPLY_THE_QTY_SCANNED)) { ?>
+				<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-check" onclick="_apply_qty();" id="codeflag_apply_qty" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('applyQtyHelp'); ?>"></button>
+			<?php } ?>
 			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-plus" onclick="_focus_barcode();" id="codeflag" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('addHelp'); ?>"></button>
 			<button type="button" class="btn btn-default btn-circle btn-xl glyphicon glyphicon-trash" onclick="_focus_barcode_delete();" id="codeflagdelete" data-toggle="tooltip" data-placement="top"  title="<?php echo $langs->trans('removeHelp'); ?>"></button>
 			<?php

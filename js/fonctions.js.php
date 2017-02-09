@@ -193,6 +193,11 @@ function _focus_barcode_delete() {
 	$('#codereaderDelete').focus();
 }
 
+function _apply_qty()
+{
+	
+}
+
 function _focus_barcode() {
 	console.log('_focus_barcode');
 	$('#codereader').focus();
