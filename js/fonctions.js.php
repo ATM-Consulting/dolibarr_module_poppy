@@ -218,39 +218,9 @@ function enterpressalert(e, textarea){
 
 function lessRefLine(ref,qty) {
 	console.log('lessRefLine', ref, qty);
-	
 	if(!qty) qty = 1;
 	
-	$tr = null;
-	
-	$('body').find(getScanPattern(ref)).each(function(i,item) {
-		var $item = $(item);
-		
-		if($item.attr('lastclicked')) {
-			$tr = $item;
-			return false;
-		}
-	});
-
-	if(!$tr) {
-		$('body').find(getScanPattern(ref)).each(function(i,item) {
-			
-			var $item = $(item);
-			
-			qty_to_test = parseInt( $item.find('td[rel="toTest"]').text() );
-			qty_scan = parseInt( $item.find('td[rel="scanned"]').text() );
-			
-			if(qty_to_test>qty_scan) {
-				$tr = $item;
-				return false;
-			}
-			
-		}); // récupère le 1er avec code barre ou ref
-		
-	}	 
-		
-	if(!$tr) $tr = $('body').find(getScanPattern(ref)).first();
-	
+	var $tr = getTr(ref);
 	
 	if($tr.length>0) {
 	
@@ -322,42 +292,43 @@ function getScanPattern(ref) {
 	
 }
 
+function getTr(ref)
+{
+	console.log('CALL FONCTION :: getTr("'+ref+'")');
+	var $tr = {length:0};
+	var TTr = $('body').find(getScanPattern(ref));
+	
+	$tr = TTr.filter('[lastclicked=1]');
+	
+	if($tr.length == 0)
+	{
+		TTr.each(function(i,item) {
+			var $item = $(item);
+			
+			var qty_to_test = parseInt( $item.find('td[rel="toTest"]').text() );
+			var qty_scan = parseInt( $item.find('td[rel="scanned"]').text() );
+			
+			if (qty_to_test > qty_scan)
+			{
+				$tr = $item;
+				console.log('tr RE-FOUND');
+				return false;
+			}
+		}); // récupère le 1er TR avec code barre ou ref qui a une quantité scannée inférieur à ce qui est attendu
+	}
+	
+	if($tr.length == 0) $tr = $('body').find(getScanPattern(ref)).first();
+	
+	return $tr;
+}
+
 function addRefLine(ref, qty) {
 	console.log('addRefLine', ref, qty);
 	
 	if(!qty) qty = 1;
 	
+	var $tr = getTr(ref);
 	
-	$tr = null;
-	
-	$('body').find(getScanPattern(ref)).each(function(i,item) {
-		var $item = $(item);
-		
-		if($item.attr('lastclicked')) {
-			$tr = $item;
-			return false;
-		}
-	});
-
-	if(!$tr) {
-		$('body').find(getScanPattern(ref)).each(function(i,item) {
-			
-			var $item = $(item);
-			
-			qty_to_test = parseInt( $item.find('td[rel="toTest"]').text() );
-			qty_scan = parseInt( $item.find('td[rel="scanned"]').text() );
-			
-			if(qty_to_test>qty_scan) {
-				$tr = $item;
-				return false;
-			}
-			
-		}); // récupère le 1er avec code barre ou ref
-		
-	}	 
-		
-	if(!$tr) $tr = $('body').find(getScanPattern(ref)).first();
-		
 	if($tr.length>0) {
 		console.log('lineExist', ref);	
 		qty = parseInt( $tr.find('td[rel="scanned"]').text() ) + qty;
