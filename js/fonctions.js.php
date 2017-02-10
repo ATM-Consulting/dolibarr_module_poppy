@@ -236,6 +236,7 @@ function _apply_qty()
 				setTimeout(function() {
 					$('#codeflag_apply_qty').removeClass('btn-success');
 				}, 2000);
+				window.parent.location.href='<?php echo dol_buildpath('/expedition/card.php', 2).'?action=confirm_valid&confirm=yes&id='; ?>'+fk_shipping;
 			}
 			else
 			{
