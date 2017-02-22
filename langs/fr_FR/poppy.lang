@@ -14,9 +14,16 @@ POPPY_EXCLUDE_CATEGORY=Exclure ces catégories de produit du colisage
 POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT=Saisir la quantité après la sélection du produit sur propale/commande/facture
 POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING=Préparer le colis lorsque l'expédition est au statut "brouillon"
 POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPED=Proposer la validation de l'expédition si toutes les quantités ont été ajoutées au colis (uniquement si la préparation d'expédition se fait au statut brouillon)
+POPPY_CAN_APPLY_THE_QTY_SCANNED=Afficher un bouton sur l'écran de préparation de colis, pour appliquer les quantités scannées en tant que quantités à expédier (uniquement si le document est en brouillon)
+POPPY_RELOAD_PAGE_ON_CLOSE_ACTION=Activer le rafraichissement de la page "fichie expédition" lors de la fermeture de la fenêtre de préparation du colis
 
 addHelp=Si vert, alors la douchette ajoute des produits au colis. Si orange, cliquez pour ajouter
 removeHelp=Si fond rouge, alors la douchette enlève des produits du colis. Si fond bleu cliquez pour supprimer.
 receptionDoneHelp=Basculer les quantités scannées dans la réception de votre commande en cours
 QtyToRecept=Quantité à réceptionner
 btScannet=Utiliser la scannette
+applyQtyHelp=Permet d'appliquer les quantités scannées en tant que quantités à expédier
+
+poppy_error_trying_use_disabled_method=Erreur : vous essayez d'utiliser une methode qui est désactivé en configuration
+poppy_error_fk_shipping_empty=Erreur : l'identifiant de l'expédition est vide
+poppy_warning_shipping_not_in_draft=Attention : l'expédition n'est pas au statut brouillon

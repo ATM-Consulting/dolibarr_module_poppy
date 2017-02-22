@@ -139,6 +139,11 @@ class ActionsPoppy
 						,width:"90%"
 						,height:$(window).height() - 50
 						,buttons:<?php echo $buttons ?>
+						<?php if (!empty($conf->global->POPPY_CAN_APPLY_THE_QTY_SCANNED)) { ?>
+						,close: function(event, ui) {
+							window.location.href = window.location.pathname + window.location.search + window.location.hash;
+						}
+						<?php } ?>
 					});
 			  		
 			  	}
