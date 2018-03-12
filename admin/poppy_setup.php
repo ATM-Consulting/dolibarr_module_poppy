@@ -53,7 +53,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	$code=$reg[1];
 	$value = GETPOST($code);
 	if(is_array($value))$value = implode(',',$value);
-	
+
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
@@ -64,7 +64,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 		dol_print_error($db);
 	}
 }
-	
+
 if (preg_match('/del_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
@@ -157,11 +157,11 @@ print '</form>';
 print '</td></tr>';
 
 if($conf->categorie->enabled) {
-	
+
 	dol_include_once('/categories/class/categorie.class.php');
 	$TCat = array();
-	if(!empty($conf->global->POPPY_EXCLUDE_CATEGORY)) $TCat = explode(',',$conf->global->POPPY_EXCLUDE_CATEGORY); 
-	
+	if(!empty($conf->global->POPPY_EXCLUDE_CATEGORY)) $TCat = explode(',',$conf->global->POPPY_EXCLUDE_CATEGORY);
+
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("POPPY_EXCLUDE_CATEGORY").'</td>';
@@ -171,13 +171,13 @@ if($conf->categorie->enabled) {
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="set_POPPY_EXCLUDE_CATEGORY">';
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-	
+
 	print $form->multiselectarray('POPPY_EXCLUDE_CATEGORY', $cate_arbo, $TCat);
-	
+
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 }
 
 $var=!$var;
@@ -191,6 +191,19 @@ print '<input type="hidden" name="action" value="set_POPPY_CAN_APPLY_THE_QTY_SCA
 echo ajax_constantonoff('POPPY_CAN_APPLY_THE_QTY_SCANNED');
 print '</form>';
 print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("POPPY_ALLOW_TO_PREPARE_ORDER").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_POPPY_ALLOW_TO_PREPARE_ORDER">';
+echo ajax_constantonoff('POPPY_ALLOW_TO_PREPARE_ORDER');
+print '</form>';
+print '</td></tr>';
+
 
 print '</table>';
 
