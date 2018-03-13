@@ -471,6 +471,9 @@ function getTr(ref)
 }
 
 function addRefLine(ref, qty) {
+//TODO special code for apply_qty to order or shipping instead of a click
+// for exemple : 010101010101 or something like that
+
 	console.log('addRefLine', ref, qty);
 
 	if(!qty) qty = 1;
