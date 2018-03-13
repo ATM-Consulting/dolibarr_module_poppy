@@ -72,7 +72,95 @@ function _put(&$PDOdb,$case) {
 		case 'updateShippingQty':
 			__out(_updateShippingQty(GETPOST('fk_shipping', 'int'), GETPOST('TDetIdQty', 'array')));
 			break;
+
+		case 'updateOrderQty':
+		    __out(_updateOrderQty(GETPOST('fk_order', 'int'), GETPOST('TLineQtyAdded', 'array'), GETPOST('TLineQtyToAdd', 'array')));
+		    break;
 	}
+}
+
+function _updateOrderQty($fk_order, $TLineQtyAdded, $TLineToAdd) {
+
+    global $db, $conf, $langs,$user;
+
+    $langs->load('poppy@poppy');
+
+    $response = new stdClass();
+    $response->error = 0;
+    $response->TError = array();
+    $response->lasterror = '';
+
+    if (empty($fk_order))
+    {
+        $response->lasterror = $langs->transnoentities('poppy_error_fk_shipping_empty');
+        $response->TError[] = $response->lasterror; $response->error++;
+    }
+
+    if (empty($response->error))
+    {
+        $order = new Commande($db);
+        if ($order->fetch($fk_order) > 0)
+        {
+
+            if ($order->statut == 0) // brouillon
+            {
+                $db->begin();
+
+                foreach($TLineQtyAdded as $lineqtyadded) {
+
+                    foreach ($order->lines as &$line)
+                    {
+                        if ($lineqtyadded[0] == $line->id && $lineqtyadded[1]>0)
+                        {
+
+                            $line->fetch_optionals($line->id);
+
+                            $res = $order->updateline($line->id, $line->desc, $line->subprice, $line->qty+$lineqtyadded[1], $line->remise_percent, $line->tva_tx,
+                                $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->date_start, $line->date_end, $line->product_type,$line->fk_parent_line,
+                                0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options,$line->fk_unit);
+
+                            if ($res < 0)
+                            {
+                                $response->lasterror = $line->db->lasterror;
+                                $response->TError[] = $response->lasterror; $response->error++;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+
+                foreach($TLineToAdd as $linetoadd) {
+
+                    $product = new Product($db);
+                    $product->fetch($linetoadd[0]);
+                    if($product->id>0) {
+                        $order->addline('', $product->price, $linetoadd[1], $product->tva_tx,0,0,$product->id);
+                    }
+                    else {
+                        $response->lasterror = $order->db->lasterror;
+                        $response->TError[] = $response->lasterror; $response->error++;
+                    }
+
+                }
+
+                if (empty($response->error)) $db->commit();
+                else $db->rollback();
+            }
+            else
+            {
+                $response->lasterror = $langs->transnoentities('poppy_warning_order_not_in_draft');
+                $response->TError[] = $response->lasterror; $response->error++;
+            }
+        }
+        else
+        {
+            $response->lasterror = $order->error;
+            $response->TError[] = $response->lasterror; $response->error++;
+        }
+    }
+
+    return $response;
 }
 
 function _getMistakeData(&$PDOdb, $ref) {
@@ -88,6 +176,7 @@ function _getMistakeData(&$PDOdb, $ref) {
 		$p=new Product($db);
 		$p->fetch($obj->rowid);
 		$Tab['label'] = $p->label;
+		$Tab['rowid'] = $p->id;
 
 		$TColis = $p->getChildsArbo($p->id, true);
 		if(count($TColis)>0) {

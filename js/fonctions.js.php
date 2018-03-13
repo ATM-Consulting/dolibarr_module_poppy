@@ -225,7 +225,7 @@ function reload_list_order_details(id) {
 		//console.log(data);
 		for(x in data) {
 			var obj = data[x];
-			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty+'</td><td data-orderdet-id="'+obj.id+'" class="poppydet_qty_scanned" rel="scanned">0</td><td class="state">&nbsp;</td><td><button class="glyphicon glyphicon-minus btn-default" name="delOneProduct' + obj.id + '" type="button" value="-" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td><td><input class="glyphicon btn-default" name="addOneProduct' + obj.id + '" type="button" value="+" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td></tr>');
+			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty+'</td><td fk-orderdet="'+obj.id+'" class="poppydet_qty_scanned" rel="scanned">0</td><td class="state">&nbsp;</td><td><button class="glyphicon glyphicon-minus btn-default" name="delOneProduct' + obj.id + '" type="button" value="-" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td><td><input class="glyphicon btn-default" name="addOneProduct' + obj.id + '" type="button" value="+" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td></tr>');
 		}
 	});
 
@@ -235,9 +235,71 @@ function _focus_barcode_delete() {
 
 	$('#codereaderDelete').focus();
 }
-
+function inIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
 function _apply_order_qty() {
 
+	var TLineQtyAdded = [];
+	var TLineQtyToAdd = [];
+	$('#list-order-details td[rel=scanned]').each(function(i, item) {
+		var $item = $(item);
+
+		var qty = parseFloat($item.text());
+
+		var fk_orderdet = parseInt($item.attr('fk-orderdet'));
+		var fk_product = parseInt($item.attr('fk-product'));
+		console.log($item,fk_orderdet,fk_product);
+		if (!isNaN(fk_orderdet)){
+			TLineQtyAdded.push([fk_orderdet, qty]);
+		}
+		else {
+			TLineQtyToAdd.push([fk_product, qty]);
+		}
+
+	});
+
+	if (fk_order_selected>0)
+	{
+		$.ajax({
+			url: 'script/interface.php'
+			,type: 'POST'
+			,dataType: 'json'
+			,data: {
+				put: 'updateOrderQty'
+				,fk_order: fk_order_selected
+				,TLineQtyAdded: TLineQtyAdded
+				,TLineQtyToAdd: TLineQtyToAdd
+				,json: 1
+			}
+
+		}).done(function(response) {
+			console.log(response);
+			if (response.error == 0)
+			{
+				// TODO reload page if possible ?
+				$('#codeflag_apply_qty').addClass('btn-success');
+				setTimeout(function() {
+					$('#codeflag_apply_qty').removeClass('btn-success');
+				}, 2000);
+
+				if(inIframe()) {
+					window.parent.location = window.parent.location ;
+				}
+
+			}
+			else
+			{
+				alert(response.lasterror);
+			}
+		}).fail(function() {
+			alert('Erreur javascript : quantités non mises à jour');
+		});
+	}
 
 }
 
@@ -461,7 +523,7 @@ function addRefLine(ref, qty) {
 			}
 			else{
 				$trMistake.find('[rel=label]').html(data.label);
-
+				$trMistake.find('[rel=scanned]').attr("fk-product",data.rowid);
 			}
 			controlQty();
 		});
