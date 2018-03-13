@@ -144,7 +144,25 @@ function _updateOrderQty($fk_order, $TLineQtyAdded, $TLineToAdd) {
 
                 }
 
-                if (empty($response->error)) $db->commit();
+                if (empty($response->error)) {
+                    $db->commit();
+
+                    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+                        $outputlangs = $langs;
+
+                        if (! empty($conf->global->MAIN_MULTILANGS)) $newlang = $order->thirdparty->default_lang;
+                        if (! empty($newlang)) {
+                            $outputlangs = new Translate("", $conf);
+                            $outputlangs->setDefaultLang($newlang);
+                        }
+
+                        $order->fetch_lines();
+                        $res = $order->generateDocument($order->modelpdf, $outputlangs, 0, 0, 0);
+
+                    }
+
+
+                }
                 else $db->rollback();
             }
             else

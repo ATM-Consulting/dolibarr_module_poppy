@@ -257,7 +257,7 @@ function _apply_order_qty() {
 		if (!isNaN(fk_orderdet)){
 			TLineQtyAdded.push([fk_orderdet, qty]);
 		}
-		else {
+		else if(!isNaN(fk_product)) {
 			TLineQtyToAdd.push([fk_product, qty]);
 		}
 
@@ -286,9 +286,9 @@ function _apply_order_qty() {
 				setTimeout(function() {
 					$('#codeflag_apply_qty').removeClass('btn-success');
 				}, 2000);
-
+console.log('inIframe()',inIframe());
 				if(inIframe()) {
-					window.parent.location = window.parent.location ;
+					window.parent.location.href = window.parent.location.href.split("#")[0] ;
 				}
 
 			}
@@ -471,8 +471,16 @@ function getTr(ref)
 }
 
 function addRefLine(ref, qty) {
-//TODO special code for apply_qty to order or shipping instead of a click
-// for exemple : 010101010101 or something like that
+
+	if(ref == '<?php echo empty($conf->global->POPPY_REF_TO_ORDER_UPDATE) ? '010101010101' : $conf->global->POPPY_REF_TO_ORDER_UPDATE ?>') {
+		_apply_order_qty();
+		return 0;
+	}
+
+	if(ref == '<?php echo empty($conf->global->POPPY_REF_TO_SHIPPING_UPDATE) ? '010101010102' : $conf->global->POPPY_REF_TO_SHIPPING_UPDATE ?>') {
+		_apply_qty();
+		return 0;
+	}
 
 	console.log('addRefLine', ref, qty);
 
