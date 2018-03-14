@@ -70,7 +70,13 @@
 	                            <!-- Affichage de l'onglet "Expédition" -->
 
 	                            <div class="col-md-4">
-	                            	<?php require('./tpl/expedition.php'); ?>
+	                            	<?php
+
+						if(empty($conf->global->POPPY_RETRICT_TO_ONE) || $fk_shipping_selected>0) {
+ 
+							require('./tpl/expedition.php'); 
+						}
+					?>
 	                            </div>
 
 	                       <?php
@@ -113,7 +119,9 @@
 	                            <!-- Affichage de l'onglet "Expédition" -->
 
 	                            <div class="col-md-4">
-	                            	<?php require('./tpl/order.php'); ?>
+	                            	<?php if(empty($conf->global->POPPY_RETRICT_TO_ONE) || $fk_order_selected>0) {
+							require('./tpl/order.php'); 
+					} ?>
 	                            </div>
 
 	                       <?php
@@ -156,7 +164,9 @@
 	                            <!-- Affichage de l'onglet "Réception" -->
 
 	                            <div class="col-md-4">
-	                            	<?php require('./tpl/reception.php'); ?>
+	                            	<?php if(empty($conf->global->POPPY_RETRICT_TO_ONE) || $fk_reception_selected>0) {
+						require('./tpl/reception.php');
+						} ?>
 	                            </div>
 
 	                       <?php
