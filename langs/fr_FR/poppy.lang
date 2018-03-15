@@ -27,3 +27,9 @@ applyQtyHelp=Permet d'appliquer les quantités scannées en tant que quantités 
 poppy_error_trying_use_disabled_method=Erreur : vous essayez d'utiliser une methode qui est désactivé en configuration
 poppy_error_fk_shipping_empty=Erreur : l'identifiant de l'expédition est vide
 poppy_warning_shipping_not_in_draft=Attention : l'expédition n'est pas au statut brouillon
+
+ScanProductToOrder=Préparer la commande
+POPPY_ALLOW_TO_PREPARE_ORDER=Permettre la préparation d'une commande client
+QtyAlreadyOrdered=Déjà en commande
+QtyScannedToAdd=Qté à ajouter
+applyQtyOrderHelp=Appliquer les quantités à la commande

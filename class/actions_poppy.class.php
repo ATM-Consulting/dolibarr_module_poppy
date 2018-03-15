@@ -62,75 +62,74 @@ class ActionsPoppy
 	function formObjectOptions($parameters, &$object, &$action, $hookmanager)
 	{
 		global $conf;
-		
+
 		$error = 0; // Error counter
-		
+
 		if (in_array('receptionstockcard', explode(':', $parameters['context']))) {
 			global $langs;
 			$langs->load('poppy@poppy');
-			
+
 			if ($object->statut == 3 || $object->statut == 4 || $object->statut == 5) {
-			
+
 			$res = $hookmanager->executeHooks('addMoreActionsPoppyPopup',$parameters,$object,$action);
 			$TButton = array();
 			if(!empty($hookmanager->resArray)) {
 				$TButton = $hookmanager->resArray;
 			}
-			
+
 			$buttons = json_encode($TButton);
-			
+
 			?>
 		  	<script type="text/javascript">
 		  	$(document).ready(function() {
 			  	$a = $('<a href="javascript:popPoppy()" class="butAction"><?php echo $langs->trans('btScannet') ?></a>');
 			  	$('tr.liste_titre td[rel=QtyToDispatchShort]').first().append($a);
 		  	});
-		  	
+
 		  	function popPoppy() {
-		  		
+
 		  		$("#popPoppy").remove();
 		  		$div = $('<div id="popPoppy"><iframe width="100%" height="100%" frameborder="0" src="<?php echo dol_buildpath('/poppy/poppy.php?fk_reception='.$object->id,1) ?>"></iframe></div>');
-				
+
 				$('body').append($div);
-				
+
 				$("#popPoppy").dialog({
 					modal:true
 					,width:"90%"
 					,height:$(window).height() - 50
 					,buttons:<?php echo $buttons ?>
 				});
-		  		
+
 		  	}
-		  	
+
 		  	</script>
 		  	<?php
-		  	
+
 			}
 		}
-
-		if (in_array('expeditioncard', explode(':', $parameters['context'])))
+        else if (in_array('expeditioncard', explode(':', $parameters['context'])))
 		{
 			global $langs;
-			
+
 			$langs->load('poppy@poppy');
 			if ($object->statut==1 && empty($conf->global->POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING)
 				|| empty($object->statut) && !empty($conf->global->POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING)) {
-				
+
 				$res = $hookmanager->executeHooks('addMoreActionsPoppyPopup',$parameters,$object,$action);
 				$TButton = array();
 				if(!empty($hookmanager->resArray)) {
 					$TButton = $hookmanager->resArray;
 				}
-				
+
 				$buttons = json_encode($TButton);
-				
+
 			  	?>
 			  	<script type="text/javascript">
 			  	$(document).ready(function() {
 				  	$a = $('<a href="javascript:popPoppy()" class="butAction"><?php echo $langs->trans('PreparePackage') ?></a>');
 				  	$('div.fiche div.tabsAction').first().append($a);
 			  	});
-			  	
+
 			  	function popPoppy() {
 			  		$div = $('<div id="popPoppy"><iframe width="100%" height="100%" frameborder="0" src="<?php echo dol_buildpath('/poppy/poppy.php?fk_shipping='.$object->id,1) ?>"></iframe></div>');
 
@@ -145,12 +144,63 @@ class ActionsPoppy
 						}
 						<?php } ?>
 					});
-			  		
+
 			  	}
-			  	
+
 			  	</script>
 			  	<?php
 			}
+		}
+
+		else if (in_array('ordercard', explode(':', $parameters['context'])))
+		{
+		    global $langs;
+
+		    $langs->load('poppy@poppy');
+
+		    if ($object->statut==0) { //onkly draft order
+
+		            $res = $hookmanager->executeHooks('addMoreActionsPoppyPopup',$parameters,$object,$action);
+		            $TButton = array();
+		            if(!empty($hookmanager->resArray)) {
+		                $TButton = $hookmanager->resArray;
+		            }
+
+		            $buttons = json_encode($TButton);
+
+		            ?>
+			  	<script type="text/javascript">
+			  	$(document).ready(function() {
+				  	$a = $('<a href="javascript:popPoppy()" class="butAction"><?php echo $langs->trans('ScanProductToOrder') ?></a>');
+				  	$('div.fiche div.tabsAction').first().append($a);
+			  	});
+
+			  	function popPoppy() {
+			  		$div = $('<div id="popPoppy"><iframe width="100%" height="100%" frameborder="0" src="<?php echo dol_buildpath('/poppy/poppy.php?fk_order='.$object->id,1) ?>"></iframe></div>');
+
+					$div.dialog({
+						modal:true
+						,width:"90%"
+						,height:$(window).height() - 50
+						,buttons:<?php echo $buttons ?>
+						,close: function(event, ui) {
+							addPoppyToOrder();
+						}
+
+					});
+
+			  	}
+
+			  	function addPoppyToOrder() {
+console.log('addPoppyToOrder');
+
+
+			  	}
+
+			  	</script>
+			  	<?php
+			}
+
 		}
 
 		if (! $error)
@@ -163,7 +213,7 @@ class ActionsPoppy
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * Inclusion d'un JS sur le formulaire d'ajout de ligne pour permettre l'ajout de ligne via un scan douchette
 	 */
@@ -171,21 +221,21 @@ class ActionsPoppy
 		global $conf;
 		?>
 		<script type="text/javascript">
-			
+
 			$(document).ready(function() {
 				$('#search_idprod').on('keypress', function( e ) {
 					if(e.which == 13) {
-						
+
 						poppySelectProd($('#search_idprod').val());
-						
+
 						e.preventDefault();
 						return false;
 					}
 				});
 			});
-			
+
 			function poppySelectProd(id_prod) {
-			
+
 				$.ajax({
 					url:"<?php echo dol_buildpath('/product/ajax/products.php',1); ?>"
 					,data:{
@@ -209,14 +259,14 @@ class ActionsPoppy
 						echo '$("#qty").focus().select();';
 					}
 					else{
-						echo 'window.setTimeout(function() { $("#addline").click() }, 300);';	
+						echo 'window.setTimeout(function() { $("#addline").click() }, 300);';
 					}
-					
+
 					?>
 				});
-			
+
 			}
-			
+
 		</script>
 		<?php
 	}
