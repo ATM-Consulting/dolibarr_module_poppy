@@ -95,6 +95,12 @@
 								    </thead>
 								    <tbody>
 								    </tbody>
+								     <tfoot>
+								    	<th>&nbsp;</th>
+								    	<th>&nbsp;</th>
+								    	<th rel="total-in">0</th>
+								    	<th rel="total">0</th>
+								    </tfoot>
 								    </table>
 
 	                            </div>
