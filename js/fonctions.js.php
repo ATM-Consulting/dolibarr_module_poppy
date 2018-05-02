@@ -373,6 +373,7 @@ function lessRefLine(ref,qty) {
 
 		if(qty>=0) {
 			updateQtyLine($tr, qty);
+
 		}
 
 	}
@@ -425,6 +426,7 @@ function updateQtyLine($tr, qty) {
 
 	}
 
+	updateTotal();
 }
 
 function getScanPattern(ref) {
@@ -437,6 +439,17 @@ function getScanPattern(ref) {
 	else{
 		return '#list-expedition-details tr[barcode="'+ref+'"],tr[ref="'+ref+'"]';
 	}
+
+}
+
+function updateTotal() {
+
+	var total = 0;
+	$("#list-order-details td[rel=scanned]").each(function(i,item) {
+		var qty_scan = parseInt( $(item).text() );
+		total+=qty_scan;
+	});
+	$("#list-order-details th[rel=total]").html(total);
 
 }
 
