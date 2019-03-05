@@ -137,8 +137,8 @@ class modPoppy extends DolibarrModules
 		// 'project'          to add a tab in project view
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
-		// 'user'             to add a tab in user view
-        $this->tabs = array();
+        $this->tabs = array('thirdparty:+suppliernorm:SupplierNorm:poppy@poppy:$object->fournisseur:/poppy/supplier_norm.php?id=__ID__');
+        // 'user'             to add a tab in user view
 
         // Dictionaries
 	    if (! isset($conf->poppy->enabled))

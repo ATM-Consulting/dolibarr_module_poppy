@@ -11,13 +11,8 @@ if(!defined('INC_FROM_DOLIBARR')) {
 }
 
 
-/* uncomment
+dol_include_once('/poppy/class/supplier_norm.class.php');
+global $db;
 
-
-dol_include_once('/mymodule/class/xxx.class.php');
-
-$PDOdb=new TPDOdb;
-
-$o=new TXXX($db);
-$o->init_db_by_vars($PDOdb);
-*/
+$o=new TSupplierNorm($db);
+$o->init_db_by_vars();

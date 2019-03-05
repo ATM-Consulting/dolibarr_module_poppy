@@ -33,3 +33,6 @@ POPPY_ALLOW_TO_PREPARE_ORDER=Permettre la préparation d'une commande client
 QtyAlreadyOrdered=Déjà en commande
 QtyScannedToAdd=Qté à ajouter
 applyQtyOrderHelp=Appliquer les quantités à la commande
+SupplierNorm=Normalisation fournisseur (Codes-barres)
+SerialNumber=Numéro de série
+LotNumber=Numéro de lot
