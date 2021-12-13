@@ -21,7 +21,7 @@
 
 	$hookmanager->initHooks(array('poppy'));
 
-	$object=stdClass;
+	$object= new stdClass();
 
 	$PDOdb = new TPDOdb;
 
