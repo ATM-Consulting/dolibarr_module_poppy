@@ -58,7 +58,7 @@ class modPoppy extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module Poppy";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.0';
+		$this->version = '1.0.1';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -249,7 +249,7 @@ class modPoppy extends DolibarrModules
 	function init($options='')
 	{
 		$sql = array();
-		
+
 		define('INC_FROM_DOLIBARR',true);
 
 		dol_include_once('/poppy/config.php');
@@ -259,7 +259,7 @@ class modPoppy extends DolibarrModules
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('isPrepared', 'Colis préparé', 'select', 0, '', 'expedition',0, 0,'', array("options"=> array('Non','Oui')));
-	
+
 		$result=$this->_load_tables('/poppy/sql/');
 
 		return $this->_init($sql, $options);
