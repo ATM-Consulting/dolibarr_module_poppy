@@ -125,10 +125,6 @@ class ActionsPoppy
 
 			  	?>
 			  	<script type="text/javascript">
-			  	$(document).ready(function() {
-				  	$a = $('<a href="javascript:popPoppy()" class="butAction"><?php echo $langs->trans('PreparePackage') ?></a>');
-				  	$('div.fiche div.tabsAction').first().append($a);
-			  	});
 
 			  	function popPoppy() {
 			  		$div = $('<div id="popPoppy"><iframe width="100%" height="100%" frameborder="0" src="<?php echo dol_buildpath('/poppy/poppy.php?fk_shipping='.$object->id,1) ?>"></iframe></div>');
@@ -269,5 +265,21 @@ console.log('addPoppyToOrder');
 
 		</script>
 		<?php
+	}
+
+	function addMoreActionsButtons($parameters, $object, $action, $hookmanager){
+
+		global $langs;
+
+		if (in_array('expeditioncard', explode(':', $parameters['context'])))
+		{
+			//Ajout bouton "Préparer le colis"
+			if ($object->statut==1 && empty($conf->global->POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING)
+				|| empty($object->statut) && !empty($conf->global->POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING)) {
+
+				print '<a href="javascript:popPoppy()" class="butAction">' . $langs->trans('PreparePackage') . '</a>';
+
+			}
+		}
 	}
 }

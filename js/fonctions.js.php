@@ -197,11 +197,17 @@ function reload_list_shipping_details(id) {
 	})
 	.then(function (data){
 		//console.log(data);
+		var total = 0;
+
 		for(x in data) {
 			var obj = data[x];
+			total+=parseFloat(obj.qty_shipped);
 			$t.append('<tr ref="'+obj.ref+'" barcode="'+obj.barcode+'"><td rel="ean">'+(obj.barcode ? obj.barcode : obj.ref)+'</td><td rel="label">'+obj.product_label+'</td><td rel="toTest">'+obj.qty_shipped+'</td><td data-expeditiondet-id="'+obj.id+'" class="poppydet_qty_scanned" rel="scanned">0</td><td class="state"><span class="glyphicon glyphicon-alert"></span></td><td><button class="glyphicon glyphicon-minus btn-default" name="delOneProduct' + obj.fk_origin_line + '" type="button" value="-" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td><td><input class="glyphicon btn-default" name="addOneProduct' + obj.fk_origin_line + '" type="button" value="+" barcode="'+(obj.barcode ? obj.barcode : obj.ref)+'" /></td></tr>');
 		}
+
+		$("#list-expedition-details th[rel=total-in]").html(total);
 	});
+
 
 }
 
@@ -373,6 +379,7 @@ function lessRefLine(ref,qty) {
 
 		if(qty>=0) {
 			updateQtyLine($tr, qty);
+
 		}
 
 	}
@@ -425,6 +432,7 @@ function updateQtyLine($tr, qty) {
 
 	}
 
+	updateTotal();
 }
 
 function getScanPattern(ref) {
@@ -437,6 +445,24 @@ function getScanPattern(ref) {
 	else{
 		return '#list-expedition-details tr[barcode="'+ref+'"],tr[ref="'+ref+'"]';
 	}
+
+}
+
+function updateTotal() {
+
+	var total = 0;
+	$("#list-order-details td[rel=scanned]").each(function(i,item) {
+		var qty_scan = parseInt( $(item).text() );
+		total+=qty_scan;
+	});
+	$("#list-order-details th[rel=total]").html(total);
+
+	var total = 0;
+	$("#list-expedition-details td[rel=scanned]").each(function(i,item) {
+		var qty_scan = parseInt( $(item).text() );
+		total+=qty_scan;
+	});
+	$("#list-expedition-details th[rel=total]").html(total);
 
 }
 

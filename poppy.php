@@ -21,7 +21,7 @@
 
 	$hookmanager->initHooks(array('poppy'));
 
-	$object=stdClass;
+	$object= new stdClass();
 
 	$PDOdb = new TPDOdb;
 
@@ -73,8 +73,8 @@
 	                            	<?php
 
 						if(empty($conf->global->POPPY_RETRICT_TO_ONE) || $fk_shipping_selected>0) {
- 
-							require('./tpl/expedition.php'); 
+
+							require('./tpl/expedition.php');
 						}
 					?>
 	                            </div>
@@ -95,6 +95,12 @@
 								    </thead>
 								    <tbody>
 								    </tbody>
+								     <tfoot>
+								    	<th>&nbsp;</th>
+								    	<th>&nbsp;</th>
+								    	<th rel="total-in">0</th>
+								    	<th rel="total">0</th>
+								    </tfoot>
 								    </table>
 
 	                            </div>
@@ -120,7 +126,7 @@
 
 	                            <div class="col-md-4">
 	                            	<?php if(empty($conf->global->POPPY_RETRICT_TO_ONE) || $fk_order_selected>0) {
-							require('./tpl/order.php'); 
+							require('./tpl/order.php');
 					} ?>
 	                            </div>
 
@@ -140,6 +146,12 @@
 								    </thead>
 								    <tbody>
 								    </tbody>
+								    <tfoot>
+								    	<th>&nbsp;</th>
+								    	<th>&nbsp;</th>
+								    	<th>&nbsp;</th>
+								    	<th rel="total">0</th>
+								    </tfoot>
 								    </table>
 
 	                            </div>
