@@ -269,7 +269,7 @@ console.log('addPoppyToOrder');
 
 	function addMoreActionsButtons($parameters, $object, $action, $hookmanager){
 
-		global $langs;
+		global $langs, $conf;
 
 		if (in_array('expeditioncard', explode(':', $parameters['context'])))
 		{
