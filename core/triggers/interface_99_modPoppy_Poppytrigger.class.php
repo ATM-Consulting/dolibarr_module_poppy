@@ -116,11 +116,15 @@ class InterfacePoppytrigger
         // Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
         // Users
+
+		$update = '_MODIFY';
+		if (intval(DOL_VERSION) < 16) $update = '_UPDATE';
+
         if ($action == 'USER_LOGIN') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'USER_UPDATE_SESSION') {
+        } elseif ($action == 'USER'.$update.'_SESSION') {
             // Warning: To increase performances, this action is triggered only if
             // constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
             dol_syslog(
