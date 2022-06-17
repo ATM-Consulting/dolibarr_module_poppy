@@ -100,6 +100,8 @@ dol_fiche_head(
     "poppy@poppy"
 );
 
+$token = function_exists('newToken') ? newToken() : $_SESSION['newtoken'];
+
 // Setup page goes here
 $form=new Form($db);
 $var=false;
@@ -117,7 +119,7 @@ print '<td>'.$langs->trans("POPPY_RETRICT_TO_ONE").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$token.'">';
 print '<input type="hidden" name="action" value="set_POPPY_RETRICT_TO_ONE">';
 echo ajax_constantonoff('POPPY_RETRICT_TO_ONE');
 print '</form>';
@@ -128,7 +130,7 @@ print '<td>'.$langs->trans("POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$token.'">';
 print '<input type="hidden" name="action" value="set_POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT">';
 echo ajax_constantonoff('POPPY_GO_TO_QTY_AFTER_SELECT_PRODUCT');
 print '</form>';
@@ -139,7 +141,7 @@ print '<td>'.$langs->trans("POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$token.'">';
 print '<input type="hidden" name="action" value="set_POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING">';
 echo ajax_constantonoff('POPPY_ADD_BUTTON_ON_DRAFT_SHIPPING');
 print '</form>';
@@ -150,7 +152,7 @@ print '<td>'.$langs->trans("POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPE
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$token.'">';
 print '<input type="hidden" name="action" value="set_POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPED">';
 echo ajax_constantonoff('POPPY_SEND_ON_SHIPPING_VALIDATION_CARD_IF_ALL_SHIPPED');
 print '</form>';
@@ -168,7 +170,7 @@ if($conf->categorie->enabled) {
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="300">';
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.$token.'">';
 	print '<input type="hidden" name="action" value="set_POPPY_EXCLUDE_CATEGORY">';
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
 
@@ -186,7 +188,7 @@ print '<td>'.$langs->trans("POPPY_CAN_APPLY_THE_QTY_SCANNED").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$token.'">';
 print '<input type="hidden" name="action" value="set_POPPY_CAN_APPLY_THE_QTY_SCANNED">';
 echo ajax_constantonoff('POPPY_CAN_APPLY_THE_QTY_SCANNED');
 print '</form>';
@@ -198,7 +200,7 @@ print '<td>'.$langs->trans("POPPY_ALLOW_TO_PREPARE_ORDER").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.$token.'">';
 print '<input type="hidden" name="action" value="set_POPPY_ALLOW_TO_PREPARE_ORDER">';
 echo ajax_constantonoff('POPPY_ALLOW_TO_PREPARE_ORDER');
 print '</form>';
